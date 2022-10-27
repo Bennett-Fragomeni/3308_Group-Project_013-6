@@ -3,12 +3,15 @@
 1. Application Description
 
 2. Contributors
-
+  - Maxwell Prue, Maxwell-Prue, mapr4688@colorado.edu
+  - Aieshah Safi, aisa9142, aisa9142@colorado.edu
+  - Nathan Keyt, nathankeyt, nake8894@colorado.edu
+  - Bennett Fragomeni, Bennett-Fragomeni, Bennett.Fragomeni@colorado.edu
 3. Stack
-- HTML
-- CSS
-- SQL
-- Node.js
+  - HTML
+  - CSS
+  - SQL
+  - Node.js
 
 4. Prerequisites
 
