@@ -7,6 +7,7 @@
   - Aieshah Safi, aisa9142, aisa9142@colorado.edu
   - Nathan Keyt, nathankeyt, nake8894@colorado.edu
   - Bennett Fragomeni, Bennett-Fragomeni, Bennett.Fragomeni@colorado.edu
+  - Nicholas Hellmers, nihe1661, nihe1661@colorado.edu
 3. Stack
   - HTML
   - CSS
