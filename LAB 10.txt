@@ -13,13 +13,16 @@ TEAM MEMBERS:
 APPLICATION NAME: FrugalFind
 
 APPLICATION DESCRIPTION:
+  SCOPE UNDER CONSIDERATION:
 - Database of Recipes with Ingredients and how much it costs
-- Ability to add more user created recipes
-- Ability to look up recipes from the web
 - Select a recipe and say how many meals you want out of it
 - Calculates the cost of the recipe
-- Calculates the Macros of the recipe
 - Spit out a grocery list (email possibly?)
+  
+  FUTURE WORK:
+- Calculates the Macros of the recipe  
+- Ability to add more user created recipes
+- Ability to look up recipes from the web
 
 VISION STATEMENT:
 - For the student who needs to frugally plan their meals. FrugalFind is an application that allows users to see the cost and nutrition of their meals from a given recipe before they buy. Unlike any old recipe website, our product gives you the price and nutrition upfront.
