@@ -5,6 +5,10 @@
 2. Contributors
 
 3. Stack
+- HTML
+- CSS
+- SQL
+- Node.js
 
 4. Prerequisites
 
