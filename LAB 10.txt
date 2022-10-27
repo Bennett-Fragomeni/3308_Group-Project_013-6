@@ -15,11 +15,7 @@ APPLICATION DESCRIPTION:
 VISION STATEMENT:
 
 COMMUNICATION PLAN:
-- Phone numbers shared with group
-- Discord
+- We plan on using Discord as our main method of communication, as well as using our project board to communicate updates on the project.
 
-MEETING PLAN: 
-- Team Meeting: 
-      Modality: In person
-      Time:     Tue 2:30 - 3:30
-- Weekly meeting with TA: Tue 3:30
+MEETING PLAN:
+- We plan on meeting from 2:30-3:30 on Tuesdays, as well as meeting with our T.A. at 3:30-4:30 on Tuesdays, in addition to other meetings as needed.
