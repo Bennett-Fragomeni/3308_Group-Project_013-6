@@ -11,11 +11,18 @@ TEAM MEMBERS:
 - Bennett Fragomeni, Bennett-Fragomeni, Bennett.Fragomeni@colorado.edu
 - Nicholas Hellmers, nihe1661, nihe1661@colorado.edu
 
-APPLICATION NAME:
+APPLICATION NAME: Grocery List Maker
 
 APPLICATION DESCRIPTION:
+- Database of Recepies with Ingredients and how much it costs
+- Ability to add more user created recepies
+- Ability to look up recepies from the web
+- Select a recepie and say how many meals you want out of it
+- Calculates the cost of the recepie
+- Calculates the Macros of the recepie
 
 VISION STATEMENT:
+- For the student who needs to frugally plan their meals. The [product name] is a [product category] that [key benefit, compelling reason to buy]. Unlike [primary competitive alternative], our product [statement of primary differentiation]
 
 COMMUNICATION PLAN:
 - We plan on using Discord as our main method of communication, as well as using our project board to communicate updates on the project.
