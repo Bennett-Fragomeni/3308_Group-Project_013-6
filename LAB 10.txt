@@ -21,7 +21,7 @@ APPLICATION DESCRIPTION:
 - Calculates the Macros of the recepie
 
 VISION STATEMENT:
-- For the student who needs to frugally plan their meals. The [product name] is a [product category] that [key benefit, compelling reason to buy]. Unlike [primary competitive alternative], our product [statement of primary differentiation]
+- For the student who needs to frugally plan their meals. FrugalFind is an application that allows users to see the cost of their meals from a given recipe before they buy. Unlike any old recipe website, our product gives you the price upfront.
 
 COMMUNICATION PLAN:
 - We plan on using Discord as our main method of communication, as well as using our project board to communicate updates on the project.
