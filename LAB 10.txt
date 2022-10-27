@@ -10,14 +10,20 @@ TEAM MEMBERS:
 - Nathan Keyt, nathankeyt, nake8894@colorado.edu
 - Bennett Fragomeni, Bennett-Fragomeni, Bennett.Fragomeni@colorado.edu
 
-APPLICATION NAME:
+APPLICATION NAME: Grocery List Maker
 
 APPLICATION DESCRIPTION:
+- Database of Recepies with Ingredients and how much it costs
+- Ability to add more user created recepies
+- Ability to look up recepies from the web
+- Select a recepie and say how many meals you want out of it
+- Calculates the cost of the recepie
+- Calculates the Macros of the recepie
 
 VISION STATEMENT:
 
 COMMUNICATION PLAN:
-- We plan on using Discord as our main method of communication, as well as using our project board to communicate updates on the project. Additionally, we each have each other's phone numbers for communication.
+- We plan on using Discord as our main method of communication, as well as using our project board to communicate updates on the project.
 
 MEETING PLAN:
 - We plan on meeting from 2:30-3:30 on Tuesdays, as well as meeting with our T.A. at 3:30-4:30 on Tuesdays, in addition to other meetings as needed.
