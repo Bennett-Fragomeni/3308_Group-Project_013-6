@@ -1,7 +1,11 @@
 # Group_Project_3308
 
 1. Application Description
-
+  - Database of Recipes with Ingredients and how much it costs
+  - Select a recipe and say how many meals you want out of it
+  - Calculates the cost of the recipe
+  - Spit out a grocery list (email possibly?)
+  
 2. Contributors
   - Maxwell Prue, Maxwell-Prue, mapr4688@colorado.edu
   - Aieshah Safi, aisa9142, aisa9142@colorado.edu
