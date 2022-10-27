@@ -10,6 +10,8 @@ TEAM MEMBERS:
 - Nathan Keyt, nathankeyt, nake8894@colorado.edu
 - Bennett Fragomeni, Bennett-Fragomeni, Bennett.Fragomeni@colorado.edu
 
+APPLICATION NAME:
+
 APPLICATION DESCRIPTION:
 
 VISION STATEMENT:
