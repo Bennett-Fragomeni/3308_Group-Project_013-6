@@ -22,7 +22,7 @@ APPLICATION DESCRIPTION:
 - Spit out a grocery list (email possibly?)
 
 VISION STATEMENT:
-- For the student who needs to frugally plan their meals. FrugalFind is an application that allows users to see the cost of their meals from a given recipe before they buy. Unlike any old recipe website, our product gives you the price upfront.
+- For the student who needs to frugally plan their meals. FrugalFind is an application that allows users to see the cost and nutrition of their meals from a given recipe before they buy. Unlike any old recipe website, our product gives you the price and nutrition upfront.
 
 COMMUNICATION PLAN:
 - We plan on using Discord as our main method of communication, as well as using our project board to communicate updates on the project.
