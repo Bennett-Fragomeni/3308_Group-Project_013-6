@@ -13,12 +13,12 @@ TEAM MEMBERS:
 APPLICATION NAME: FrugalFind
 
 APPLICATION DESCRIPTION:
-- Database of Recepies with Ingredients and how much it costs
-- Ability to add more user created recepies
-- Ability to look up recepies from the web
-- Select a recepie and say how many meals you want out of it
-- Calculates the cost of the recepie
-- Calculates the Macros of the recepie
+- Database of Recipes with Ingredients and how much it costs
+- Ability to add more user created recipes
+- Ability to look up recipes from the web
+- Select a recipe and say how many meals you want out of it
+- Calculates the cost of the recipe
+- Calculates the Macros of the recipe
 - Spit out a grocery list (email possibly?)
 
 VISION STATEMENT:
