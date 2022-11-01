@@ -42,6 +42,84 @@ app.use(
       extended: true,
     })
 );
+app.get('/', (req, res) =>{
+    console.log('/');
+    res.redirect('/login');
+});
+  
+// LOGIN API
+app.get('/login', (req, res) => {
+    console.log('/login');
+    res.render('pages/login');
+});
+
+app.post('/login', (req, res) => {
+    console.log('Method POST /login');
+    const query = 'SELECT * FROM users WHERE users.username = $1'; // May need to change for specific database
+    db.any(query, [
+        req.body.username // User's input
+    ])
+    .then(async function (data) {
+        const match = await bcrypt.compare(req.body.password, data[0].password);
+        if (match == false) {
+            console.log('Incorrect password');
+            return res.render('pages/login');
+        }
+        else {
+            console.log('User found and passwords match')
+            req.session.user = {
+                api_key: process.env.API_KEY,
+              };
+            req.session.save();
+            return res.redirect('/'); // May change what redirects to
+        }
+      })
+      .catch(err => {
+        console.log('Cannot find username');
+        res.redirect('/register');
+      });
+});
+
+// AUTHENTICATION
+const auth = (req, res, next) => {
+    if (!req.session.user && !req.path.includes("register")) {
+      // Default to register as long as current path is not register
+      console.log('AUTHENTICATION redirect /register');
+      return res.redirect('/register');
+    }
+    next();
+  };
+app.use(auth);
+
+// REGISTER API
+app.get('/register', (req, res) => {
+    console.log('/register');
+    res.render('pages/register');
+});
+
+app.post('/register', async (req, res) => {
+    console.log('Method POST /register');
+    const query = 'INSERT INTO users (username, password) VALUES ($1, $2)'; // May need to change depending on database
+    const hash = await bcrypt.hash(req.body.password, 10); // Hashed password
+    db.any(query, [
+        req.body.username,
+        hash
+    ])
+    .then(function (data) {
+        res.redirect('/login');
+      })
+      .catch(function (err) {
+        res.redirect('/register');
+        console.log('Failed to register');
+      });
+  });
+
+// LOGOUT API
+app.get('/logout', (req, res) => {
+    console.log('Logging out');
+    req.session.destroy();
+    res.render('pages/login');
+});
 
 app.listen(3000);
 console.log('Server is listening on port 3000');
