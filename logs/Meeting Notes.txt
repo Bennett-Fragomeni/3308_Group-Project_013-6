@@ -1,0 +1,22 @@
+Meeting 1: 11/1/2022
+
+Team 6
+
+Project Name: FrugalFind
+
+Move lab10.txt into milestones
+
+Come up with EPIC label
+Create user stories
+Assign responsibilities
+
+** Deliverable by Thurs 2:50 **
+
+Use the Recommended Checkpoints for each weekly TA meeting
+
+Make a branch every time that you want to add / change something
+- Make sure to request merges and everyone else in the team signs off on it to add it to main
+- Branch name should be feature that you're working on
+- If there is an issue found, create an issue and assign it to the person who was working on it
+
+Everyone should make equal contributions to the Main Branch
