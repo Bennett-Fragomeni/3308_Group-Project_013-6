@@ -1,0 +1,67 @@
+<%- include ('../partials/header') %>
+
+    <main>
+      <div
+        class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12"
+      >
+        <img
+          src="../../resources/img/background.png"
+          alt="max-w-lg"
+          class="absolute scale-225"
+        />
+        <div
+          class="relative bg-white px-6 pt-8 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-10"
+        >
+          <form class="relative flex-col space-y-3"action="\register" method="POST">
+              <h1 class="text-2xl font-bold mb-5">Register</h1>
+              <div class="">
+                <input
+                class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-80"
+                name="email"
+                type="email"
+                placeholder="Email"
+                requried
+                />
+              </div>
+              <div class="">
+                <input
+                class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-80"
+                name="username"
+                type="username"
+                placeholder="Username"
+                required
+                />
+              </div>
+              <div class="">
+                <input
+                  class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-80"
+                  name="password"
+                  type="password"
+                  placeholder="Password"
+                  required
+                />
+              </div>
+              <div class="">
+                <input
+                  class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-80"
+                  name="passwordcheck"
+                  type="passwordcheck"
+                  placeholder="Confirm Password"
+                  required
+              />
+              </div>
+              <div class="flex py-2">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-lg text-white" id="submit_button">
+                  Sign Up
+                </button>
+              </div>
+              <div class="flex justify-center text-md">
+                <text>Already have an account?&nbsp</text>
+                <a hred="/login" class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">Log In</a>
+              </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+<%- include ('../partials/footer') %>
