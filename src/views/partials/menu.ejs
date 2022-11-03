@@ -1,32 +1,59 @@
-<menu>
-    <nav class="navbar navbar-expand-sm border-bottom">
-      <div class="container">
-        <button
-          class="navbar-toggler ms-auto"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbar-collapse"
-          aria-controls="navbar"
+<nav class="relative w-full flex flex-wrap items-center justify-between py-3 bg-gray-100 text-gray-500 hover:text-gray-700 focus:text-gray-700 shadow-lg">
+  <div class="container-fluid w-full flex flex-wrap items-center justify-between px-6">
+    <!-- LEFT MENU ITEMS -->
+    <div class="navbar-collapse flex-grow items-center">
+      <a class="text-xl text-black font-semibold" href="/">FrugalFinder</a>
+      <ul class="navbar-nav flex-col pl-0 mr-auto">
+        <li class="nav-item pr-2">
+          <a class="nav-link active" aria-current="page" href="/home">Home</a>
+        </li>
+        <li class="nav-item pr-2">
+          <a class="nav-link text-gray-500 hover:text-gray-700 focus:text-gray-700 p-0" href="/home/recepies">Recepies</a>
+        </li>
+        <li class="nav-item pr-2">
+          <a class="nav-link text-gray-500 hover:text-gray-700 focus:text-gray-700 p-0" href="/register">PLACEHOLDER</a>
+        </li>
+      </ul>
+    </div>
+  <!-- RIGHT MENU ITEMS -->
+    <div class="flex items-center relative">
+      <div class="dropdown relative">
+        <a
+          class="dropdown-toggle flex items-center hidden-arrow"
+          href="#"
+          id="dropdownMenuButton1"
+          role="button"
+          data-bs-toggle="dropdown"
           aria-expanded="false"
-          aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbar-collapse">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/Home">Register</a>
-            </li>
-          </ul>
-          <div class="nav-item me-1">
-                <a class="nav-link" href="/logout">Logout</a>
-          </div>
-          <div class="nav-item me-1">
-                <a class="nav-link" href="/logout">Login</a>
-          </div>
-          <div class="nav-item me-1">
-                <a class="nav-link" href="/register">Register</a>
-          </div>
-        </div>
+        > Profile
+        </a>
+        <ul
+          class="dropdown-menu min-w-max absolute hidden bg-white text-base z-50 float-left py-2 list-none text-left rounded-lg shadow-lg mt-1 hidden m-0 bg-clip-padding border-none left-auto right-0"
+          aria-labelledby="dropdownMenuButton1"
+        >
+          <li>
+            <a
+              class="dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100"
+              href="/login"
+              >Login</a
+            >
+          </li>
+          <li>
+            <a
+              class="dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100"
+              href="/register"
+              >Register</a
+            >
+          </li>
+          <li>
+            <a
+              class="dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100"
+              href="/logout"
+              >Logout</a
+            >
+          </li>
+        </ul>
       </div>
-    </nav>
-</menu>
+    </div>
+  </div>
+</nav>

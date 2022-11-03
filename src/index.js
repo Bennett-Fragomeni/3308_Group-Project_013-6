@@ -103,10 +103,11 @@ app.get('/register', (req, res) => {
 // REGISTER POST API
 app.post('/register', async (req, res) => {
     console.log('POST: /register');
-    const query = 'INSERT INTO users (username, password) VALUES ($1, $2);'; // May need to change depending on database
+    const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3);'; // May need to change depending on database
     const hash = await bcrypt.hash(req.body.password, 10); // Hashed password
     db.any(query, [
         req.body.username,
+        req.body.email,
         hash
     ])
     .then(function (data) {
@@ -127,7 +128,20 @@ app.get('/home', (req, res) => {
 // Get recepies
 app.get('/recepies', (req, res) => {
   console.log('GET: /recepies');
-  res.render('pages/recepies');
+  const query = 'SELECT * FROM recepies ORDER BY recepies.recepie_id DESC'
+  db.any(query)
+  .then(recepies => {
+    res.render('pages/recepies',
+      recepies,
+      message = "sucessfully got recepies"
+    );    
+  })
+  .catch(function (err) {
+    res.redirect('/recepies',
+    );
+    console.log('Failed to GET: /recepies')
+  });
+
 });
 
 // POST HOME
@@ -149,7 +163,7 @@ app.post('/home', (req, res) => {
         res.redirect('/home', 
           res.message = "Unknown Recepie"
         );
-        console.log('Failed to get recepie');
+        console.log('Failed to search recepie');
       });
   }
   if(req.action = "ingredients"){
@@ -182,7 +196,6 @@ app.post('/home', (req, res) => {
 // LOGOUT API
 app.get('/logout', (req, res) => {
   console.log('GET: /logout'); 
-  console.log('Logging out');
   req.session.destroy();
   res.render('pages/login');
 });
