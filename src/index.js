@@ -103,10 +103,11 @@ app.get('/register', (req, res) => {
 // REGISTER POST API
 app.post('/register', async (req, res) => {
     console.log('POST: /register');
-    const query = 'INSERT INTO users (username, password) VALUES ($1, $2);'; // May need to change depending on database
+    const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3);'; // May need to change depending on database
     const hash = await bcrypt.hash(req.body.password, 10); // Hashed password
     db.any(query, [
         req.body.username,
+        req.body.email,
         hash
     ])
     .then(function (data) {
@@ -121,7 +122,6 @@ app.post('/register', async (req, res) => {
 // LOGOUT API
 app.get('/logout', (req, res) => {
   console.log('GET: /logout'); 
-  console.log('Logging out');
   req.session.destroy();
   res.render('pages/login');
 });
