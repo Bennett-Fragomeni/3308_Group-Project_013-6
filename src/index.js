@@ -119,6 +119,79 @@ app.post('/register', async (req, res) => {
       });
   });
 
+// GET HOME
+app.get('/home', (req, res) => {
+  console.log('GET: /home');
+  res.render('pages/home');
+});
+
+// Get home/recepies
+app.get('/recepies', (req, res) => {
+  console.log('GET: /recepies');
+  const query = 'SELECT * FROM recepies ORDER BY recepies.recepie_id DESC'
+  db.any(query)
+  .then(recepies => {
+    res.render('pages/recepies',
+      recepies,
+      message = "sucessfully got recepies"
+    );    
+  })
+  .catch(function (err) {
+    res.redirect('/recepies',
+    );
+    console.log('Failed to GET: /recepies')
+  });
+});
+
+// POST HOME
+app.post('/home', (req, res) => {
+  // Recepie Search
+  if (req.action = "recepie"){ //will probably need to change
+    console.log('Recepie Search')
+    const query = 'SELECT * FROM recepies WHERE recepies.recepie_name = $1;';
+    db.any(query, [
+      req.name
+    ])
+    .then(function (data) {
+        res.render('/home', 
+          res.recepie = data,
+          res.message = "Sucessfully got Recepie"
+        );
+      })
+      .catch(function (err) {
+        res.redirect('/home', 
+          res.message = "Unknown Recepie"
+        );
+        console.log('Failed to search recepie');
+      });
+  }
+  if(req.action = "ingredients"){
+    console.log("GET: Ingredients")
+    const query = `SELECT * FROM recepies,
+    JOIN recepies_to_ingredients, 
+      ON recepies.recepie_id = recepies_to_ingredients.recepie_id, 
+    JOIN ingredients,
+      ON recepies_to_ingredients.ingredient_id = ingredients.ingredient_id,
+    WHERE recepies.recepie_name = $1;`;
+    db.any(query, [
+      req.name
+    ])
+    .then(function (data) {
+        res.render('/home', 
+          ingredients = data,
+          message = "Sucessfully got Ingredients"
+        );
+      })
+      .catch(function (err) {
+        res.redirect('/home', 
+          message = "Problem getting ingredients for recepie"
+        );
+        console.log('Failed to get Ingredients');
+      });
+  }
+});
+
+
 // LOGOUT API
 app.get('/logout', (req, res) => {
   console.log('GET: /logout'); 
