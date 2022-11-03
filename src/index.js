@@ -126,8 +126,20 @@ app.get('/home', (req, res) => {
 
 // Get home/recepies
 app.get('/recepies', (req, res) => {
-  console.log('GET: /home/recepies');
-  res.render('pages/recepies');
+  console.log('GET: /recepies');
+  const query = 'SELECT * FROM recepies ORDER BY recepies.recepie_id DESC'
+  db.any(query)
+  .then(recepies => {
+    res.render('pages/recepies',
+      recepies,
+      message = "sucessfully got recepies"
+    );    
+  })
+  .catch(function (err) {
+    res.redirect('/recepies',
+    );
+    console.log('Failed to GET: /recepies')
+  });
 });
 
 // POST HOME
@@ -149,7 +161,7 @@ app.post('/home', (req, res) => {
         res.redirect('/home', 
           res.message = "Unknown Recepie"
         );
-        console.log('Failed to get recepie');
+        console.log('Failed to search recepie');
       });
   }
   if(req.action = "ingredients"){

@@ -11,6 +11,7 @@ CREATE TABLE recipes(
     recipe_id SERIAL PRIMARY KEY,
     recipe_name VARCHAR(50) NOT NULL,
     recipe_desc VARCHAR(500) NOT NULL,
+    recipe_img VARCHAR(100)
 );
 
 DROP TABLE IF EXISTS ingredients CASCADE;
