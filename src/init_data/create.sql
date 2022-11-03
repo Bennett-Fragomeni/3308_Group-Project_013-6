@@ -11,8 +11,7 @@ CREATE TABLE recipes(
     recipe_id SERIAL PRIMARY KEY,
     recipe_name VARCHAR(50) NOT NULL,
     recipe_desc VARCHAR(500) NOT NULL,
-    password CHAR(60) NOT NULL,
-    user_id SERIAL NOT NULL
+    recipe_img VARCHAR(100)
 );
 
 DROP TABLE IF EXISTS ingredients CASCADE;
@@ -26,3 +25,6 @@ CREATE TABLE recipe_to_ingredients(
     recipe_id SERIAL NOT NULL,
     ingredient_id SERIAL NOT NULL
 );
+
+INSERT INTO users (user_id, username, email, password) 
+    VALUES (0, "test", "test@test.com", "test");
