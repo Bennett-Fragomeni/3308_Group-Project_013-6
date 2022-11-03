@@ -1,4 +1,4 @@
-INSERT INTO users (user_id, username, email, password) VALUES,
+INSERT INTO users (user_id, username, email, password) VALUES
 (1, 'jandrich0', 'jandrich0@colorado.edu','$2b$10$9OZnKo7OMX3IJEpwRy2oWOxkWakx2eWo6OQuJIBSPzFJMWzgWqIVW'),
 (2, 'ghaslock1', 'ghaslock1@colorado.edu','$2b$10$nlSB6HKzASBssQJEUC7hJOpqUltQb7h1wXrufoBkPumUXjVkGw4P.'),
 (3, 'edeetlefs2', 'edeetlefs2@colorado.edu','$2b$10$ZCxPhS4yXrz6JThoDLjLHecBp.uN3XneLpqAJ/XbXW09GnH1q1tEq'),
