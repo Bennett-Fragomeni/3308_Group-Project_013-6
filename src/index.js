@@ -74,7 +74,7 @@ app.post('/login', (req, res) => {
                 api_key: process.env.API_KEY,
               };
             req.session.save();
-            return res.redirect('/'); // May change what redirects to
+            return res.redirect('/home'); // May change what redirects to
         }
       })
       .catch(err => {
@@ -103,6 +103,14 @@ app.get('/register', (req, res) => {
 // REGISTER POST API
 app.post('/register', async (req, res) => {
     console.log('POST: /register');
+
+    if (req.body.password != req.body.confirmpassword) {
+      console.log('passwords don\'t match')
+      console.log(req.body.password);
+      console.log(req.body.confirmpassword);
+      return res.redirect('/register');
+    }
+
     const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3);'; // May need to change depending on database
     const hash = await bcrypt.hash(req.body.password, 10); // Hashed password
     db.any(query, [
@@ -111,6 +119,7 @@ app.post('/register', async (req, res) => {
         hash
     ])
     .then(function (data) {
+        console.log('register successful');
         res.redirect('/login');
       })
       .catch(function (err) {
@@ -124,6 +133,11 @@ app.get('/logout', (req, res) => {
   console.log('GET: /logout'); 
   req.session.destroy();
   res.render('pages/login');
+});
+
+app.get('/home', (req, res) => {
+  console.log('GET: /home');
+  res.render('pages/home');
 });
 
 app.listen(3000);
