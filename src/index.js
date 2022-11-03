@@ -42,19 +42,22 @@ app.use(
       extended: true,
     })
 );
+
+// BASE API
 app.get('/', (req, res) =>{
-    console.log('/');
+    console.log('GET: /');
     res.redirect('/login');
 });
   
-// LOGIN API
+// LOGIN GET API
 app.get('/login', (req, res) => {
-    console.log('/login');
+    console.log('GET: /login');
     res.render('pages/login');
 });
 
+// LOGIN POST API
 app.post('/login', (req, res) => {
-    console.log('Method POST /login');
+    console.log('POST: /login');
     const query = 'SELECT * FROM users WHERE users.username = $1'; // May need to change for specific database
     db.any(query, [
         req.body.username // User's input
@@ -91,15 +94,16 @@ const auth = (req, res, next) => {
   };
 app.use(auth);
 
-// REGISTER API
+// REGISTER GET API
 app.get('/register', (req, res) => {
-    console.log('/register');
+    console.log('GET: /register');
     res.render('pages/register');
 });
 
+// REGISTER POST API
 app.post('/register', async (req, res) => {
-    console.log('Method POST /register');
-    const query = 'INSERT INTO users (username, password) VALUES ($1, $2)'; // May need to change depending on database
+    console.log('POST: /register');
+    const query = 'INSERT INTO users (username, password) VALUES ($1, $2);'; // May need to change depending on database
     const hash = await bcrypt.hash(req.body.password, 10); // Hashed password
     db.any(query, [
         req.body.username,
@@ -116,9 +120,10 @@ app.post('/register', async (req, res) => {
 
 // LOGOUT API
 app.get('/logout', (req, res) => {
-    console.log('Logging out');
-    req.session.destroy();
-    res.render('pages/login');
+  console.log('GET: /logout'); 
+  console.log('Logging out');
+  req.session.destroy();
+  res.render('pages/login');
 });
 
 app.listen(3000);
