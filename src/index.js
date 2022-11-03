@@ -124,9 +124,9 @@ app.get('/home', (req, res) => {
   res.render('pages/home');
 });
 
-// Get home/recepies
+// Get recepies
 app.get('/recepies', (req, res) => {
-  console.log('GET: /home/recepies');
+  console.log('GET: /recepies');
   res.render('pages/recepies');
 });
 
