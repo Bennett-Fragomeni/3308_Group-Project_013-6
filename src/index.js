@@ -87,7 +87,7 @@ app.post('/login', (req, res) => {
 
 // AUTHENTICATION
 const auth = (req, res, next) => {
-    if (!req.session.user && !req.path.includes("register")) {
+    if (!req.session.user && !req.path.includes("register") && !req.path.includes("login")) {
       // Default to register as long as current path is not register
       console.log('AUTHENTICATION redirect /register');
       return res.redirect('/register');
