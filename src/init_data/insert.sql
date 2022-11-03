@@ -99,3 +99,8 @@ INSERT INTO users (user_id, username, email, password) VALUES
 (98, 'clafond2p', 'clafond2p@colorado.edu','$2b$10$k8f.KxBRT64Dyh17F8KRTOQ0/wEVHcdYRq5SRxCmFB5K7aHjms35G'),
 (99, 'tlakenden2q', 'tlakenden2q@colorado.edu','$2b$10$DT7dXex0eO/ahaX75cn/IePV.22taG2JB9Xz2J63O1CE2QpLXjeq2'),
 (100, 'rvousden2r', 'rvousden2r@colorado.edu','$2b$10$s/G5hi/KTWS35mqkhtT.J.o.aAM1G5xcFnubHwrm2i20quGy0y5/a');
+
+
+INSERT INTO recepies (recepie_id, name, description) VALUES
+(1, "Hot dog", "A classic hot dog on a bun, add ketchup if you want."),
+(2, "Hamburger", "An all american Hamburger, just beef and bread");
