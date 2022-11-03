@@ -74,7 +74,7 @@ app.post('/login', (req, res) => {
                 api_key: process.env.API_KEY,
               };
             req.session.save();
-            return res.redirect('/'); // May change what redirects to
+            return res.redirect('/home'); // May change what redirects to
         }
       })
       .catch(err => {
