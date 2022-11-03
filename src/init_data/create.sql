@@ -26,3 +26,5 @@ CREATE TABLE recipe_to_ingredients(
     ingredient_id SERIAL NOT NULL
 );
 
+INSERT INTO users (user_id, username, email, password) 
+    VALUES (0, "test", "test@test.com", "test");
