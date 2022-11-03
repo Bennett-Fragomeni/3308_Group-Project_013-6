@@ -1,5 +1,5 @@
 <%- include ('../partials/header') %>
-
+<%- include ('../partials/menu') %>
     <main>
       <div
         class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12"
@@ -44,8 +44,8 @@
               <div class="">
                 <input
                   class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-80"
-                  name="passwordcheck"
-                  type="passwordcheck"
+                  name="confirmpassword"
+                  type="password"
                   placeholder="Confirm Password"
                   required
               />
@@ -57,7 +57,7 @@
               </div>
               <div class="flex justify-center text-md">
                 <text>Already have an account?&nbsp</text>
-                <a hred="/login" class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">Log In</a>
+                <a href="/login" class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">Log In</a>
               </div>
           </form>
         </div>

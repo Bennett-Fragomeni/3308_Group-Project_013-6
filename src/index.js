@@ -42,19 +42,22 @@ app.use(
       extended: true,
     })
 );
+
+// BASE API
 app.get('/', (req, res) =>{
-    console.log('/');
+    console.log('GET: /');
     res.redirect('/login');
 });
   
-// LOGIN API
+// LOGIN GET API
 app.get('/login', (req, res) => {
-    console.log('/login');
+    console.log('GET: /login');
     res.render('pages/login');
 });
 
+// LOGIN POST API
 app.post('/login', (req, res) => {
-    console.log('Method POST /login');
+    console.log('POST: /login');
     const query = 'SELECT * FROM users WHERE users.username = $1'; // May need to change for specific database
     db.any(query, [
         req.body.username // User's input
@@ -68,10 +71,12 @@ app.post('/login', (req, res) => {
         else {
             console.log('User found and passwords match')
             req.session.user = {
+                username: data.username,
+                email: data.email,
                 api_key: process.env.API_KEY,
               };
             req.session.save();
-            return res.redirect('/'); // May change what redirects to
+            return res.redirect('/home'); // May change what redirects to
         }
       })
       .catch(err => {
@@ -91,21 +96,32 @@ const auth = (req, res, next) => {
   };
 app.use(auth);
 
-// REGISTER API
+// REGISTER GET API
 app.get('/register', (req, res) => {
-    console.log('/register');
+    console.log('GET: /register');
     res.render('pages/register');
 });
 
+// REGISTER POST API
 app.post('/register', async (req, res) => {
-    console.log('Method POST /register');
-    const query = 'INSERT INTO users (username, password) VALUES ($1, $2)'; // May need to change depending on database
+    console.log('POST: /register');
+
+    if (req.body.password != req.body.confirmpassword) {
+      console.log('passwords don\'t match')
+      console.log(req.body.password);
+      console.log(req.body.confirmpassword);
+      return res.redirect('/register');
+    }
+
+    const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3);'; // May need to change depending on database
     const hash = await bcrypt.hash(req.body.password, 10); // Hashed password
     db.any(query, [
         req.body.username,
+        req.body.email,
         hash
     ])
     .then(function (data) {
+        console.log('register successful');
         res.redirect('/login');
       })
       .catch(function (err) {
@@ -114,11 +130,85 @@ app.post('/register', async (req, res) => {
       });
   });
 
+// GET HOME
+app.get('/home', (req, res) => {
+  console.log('GET: /home');
+  res.render('pages/home');
+});
+
+// Get home/recipes
+app.get('/recipes', (req, res) => {
+  console.log('GET: /recipes');
+  const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
+  db.any(query)
+  .then(recipes => {
+    res.render('pages/recipes',
+      recipes,
+      message = "sucessfully got recipes"
+    );    
+  })
+  .catch(function (err) {
+    res.redirect('/home',
+    );
+    console.log('Failed to GET: /recipes')
+  });
+
+});
+
+// POST HOME
+app.post('/home', (req, res) => {
+  // Recepie Search
+  if (req.action = "recipe"){ //will probably need to change
+    console.log('Recipe Search')
+    const query = 'SELECT * FROM recipes WHERE recipes.recipe_name = $1;';
+    db.any(query, [
+      req.name
+    ])
+    .then(function (data) {
+        res.render('/home', 
+          res.recepie = data,
+          res.message = "Sucessfully got recipe"
+        );
+      })
+      .catch(function (err) {
+        res.redirect('/home', 
+          res.message = "Unknown recipe"
+        );
+        console.log('Failed to search recipe');
+      });
+  }
+  if(req.action = "ingredients"){
+    console.log("GET: Ingredients")
+    const query = `SELECT * FROM recipes,
+    JOIN recipe_to_ingredients, 
+      ON recipes.recipe_id = recipe_to_ingredients.recipe_id, 
+    JOIN ingredients,
+      ON recipe_to_ingredients.ingredient_id = ingredients.ingredient_id,
+    WHERE recipes.recipe_name = $1;`;
+    db.any(query, [
+      req.name
+    ])
+    .then(function (data) {
+        res.render('/home', 
+          ingredients = data,
+          message = "Sucessfully got Ingredients"
+        );
+      })
+      .catch(function (err) {
+        res.redirect('/home', 
+          message = "Problem getting ingredients for recipe"
+        );
+        console.log('Failed to get Ingredients');
+      });
+  }
+});
+
+
 // LOGOUT API
 app.get('/logout', (req, res) => {
-    console.log('Logging out');
-    req.session.destroy();
-    res.render('pages/login');
+  console.log('GET: /logout'); 
+  req.session.destroy();
+  res.render('pages/login');
 });
 
 app.listen(3000);
