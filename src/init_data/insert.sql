@@ -101,6 +101,6 @@ INSERT INTO users (user_id, username, email, password) VALUES
 (100, 'rvousden2r', 'rvousden2r@colorado.edu','$2b$10$s/G5hi/KTWS35mqkhtT.J.o.aAM1G5xcFnubHwrm2i20quGy0y5/a');
 
 
-INSERT INTO recepies (recepie_id, recepie_name, recepie_description) VALUES
+INSERT INTO recepies (recepie_id, recepie_name, recepie_description, NULL) VALUES
 (1, "Hot dog", "A classic hot dog on a bun, add ketchup if you want."),
 (2, "Hamburger", "An all american Hamburger, just beef and bread");
