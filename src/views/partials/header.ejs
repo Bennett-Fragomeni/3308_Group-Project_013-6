@@ -4,21 +4,26 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <meta name="description" content="" />
     <title>Frugal Finder</title>
     <!-- TO-DO: Add the <link> tag to incpude bootstrap stylesheet -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../dist/output.css" rel="stylesheet">
     <script>
-        tailwind.config = {
-          theme: {
-            extend: {
-              colors: {
-                clifford: '#da373d',
-              }
-            }
-          }
-        }
-      </script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            scale:{
+              "225":"2.25"
+            },
+            colors: {
+              clifford: "#da373d",
+            },
+          },
+        },
+      };
+    </script>
   </head>
   <body>
