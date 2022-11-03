@@ -125,7 +125,7 @@ app.get('/home', (req, res) => {
   res.render('pages/home');
 });
 
-// Get home/recepies
+// Get recepies
 app.get('/recepies', (req, res) => {
   console.log('GET: /recepies');
   const query = 'SELECT * FROM recepies ORDER BY recepies.recepie_id DESC'
@@ -141,6 +141,7 @@ app.get('/recepies', (req, res) => {
     );
     console.log('Failed to GET: /recepies')
   });
+
 });
 
 // POST HOME
