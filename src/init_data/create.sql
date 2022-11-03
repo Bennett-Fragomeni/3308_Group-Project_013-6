@@ -26,3 +26,4 @@ CREATE TABLE recipe_to_ingredients(
     recipe_id SERIAL NOT NULL,
     ingredient_id SERIAL NOT NULL
 );
+
