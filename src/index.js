@@ -118,6 +118,61 @@ app.post('/register', async (req, res) => {
       });
   });
 
+// GET HOME
+app.get('/home', (req, res) => {
+  console.log('GET: /home');
+  res.render('pages/home');
+});
+
+// POST HOME
+app.post('/home', (req, res) => {
+  // Get a recepie
+  console.log("GET: Recepie")
+  if (req.action = "recepie"){ //will probably need to change
+    const query = 'SELECT * FROM recepies WHERE recepies.recepie_name = $1;';
+    db.any(query, [
+      req.name
+    ])
+    .then(function (data) {
+        res.render('/home', 
+          recepie = data,
+          message = "Sucessfully got Recepie"
+        );
+      })
+      .catch(function (err) {
+        res.redirect('/home', 
+          message = "Unknown Recepie"
+        );
+        console.log('Failed to get recepie');
+      });
+  }
+  if(req.action = "ingredients"){
+    console.log("GET: Ingredients")
+    const query = `SELECT * FROM recepies,
+    JOIN recepies_to_ingredients, 
+      ON recepies.recepie_id = recepies_to_ingredients.recepie_id, 
+    JOIN ingredients,
+      ON recepies_to_ingredients.ingredient_id = ingredients.ingredient_id,
+    WHERE recepies.recepie_name = $1;`;
+    db.any(query, [
+      req.name
+    ])
+    .then(function (data) {
+        res.render('/home', 
+          ingredients = data,
+          message = "Sucessfully got Ingredients"
+        );
+      })
+      .catch(function (err) {
+        res.redirect('/home', 
+          message = "Problem getting ingredients for recepie"
+        );
+        console.log('Failed to get Ingredients');
+      });
+  }
+});
+
+
 // LOGOUT API
 app.get('/logout', (req, res) => {
   console.log('GET: /logout'); 
