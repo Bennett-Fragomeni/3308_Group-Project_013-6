@@ -124,24 +124,30 @@ app.get('/home', (req, res) => {
   res.render('pages/home');
 });
 
+// Get home/recepies
+app.get('/recepies', (req, res) => {
+  console.log('GET: /home/recepies');
+  res.render('pages/recepies');
+});
+
 // POST HOME
 app.post('/home', (req, res) => {
-  // Get a recepie
-  console.log("GET: Recepie")
+  // Recepie Search
   if (req.action = "recepie"){ //will probably need to change
+    console.log('Recepie Search')
     const query = 'SELECT * FROM recepies WHERE recepies.recepie_name = $1;';
     db.any(query, [
       req.name
     ])
     .then(function (data) {
         res.render('/home', 
-          recepie = data,
-          message = "Sucessfully got Recepie"
+          res.recepie = data,
+          res.message = "Sucessfully got Recepie"
         );
       })
       .catch(function (err) {
         res.redirect('/home', 
-          message = "Unknown Recepie"
+          res.message = "Unknown Recepie"
         );
         console.log('Failed to get recepie');
       });
