@@ -85,16 +85,16 @@ app.post('/login', (req, res) => {
       });
 });
 
-// AUTHENTICATION
+/* AUTHENTICATION
 const auth = (req, res, next) => {
-    if (!req.session.user && !req.path.includes("register") && !req.path.includes("login")) {
+    if (!req.session.user) {
       // Default to register as long as current path is not register
       console.log('AUTHENTICATION redirect /register');
-      return res.redirect('/register');
+      return res.render('pages/login');
     }
     next();
   };
-app.use(auth);
+app.use(auth);*/
 
 // REGISTER GET API
 app.get('/register', (req, res) => {
