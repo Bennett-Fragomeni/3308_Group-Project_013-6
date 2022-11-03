@@ -74,7 +74,7 @@ app.post('/login', (req, res) => {
                 api_key: process.env.API_KEY,
               };
             req.session.save();
-            return res.redirect('/home'); // May change what redirects to
+            return res.redirect('/'); // May change what redirects to
         }
       })
       .catch(err => {
@@ -133,11 +133,6 @@ app.get('/logout', (req, res) => {
   console.log('GET: /logout'); 
   req.session.destroy();
   res.render('pages/login');
-});
-
-app.get('/home', (req, res) => {
-  console.log('GET: /home');
-  res.render('pages/home');
 });
 
 app.listen(3000);
