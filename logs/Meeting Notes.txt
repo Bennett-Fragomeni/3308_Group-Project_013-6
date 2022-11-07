@@ -41,6 +41,8 @@ Plan for next week:
   - Add search functionality for lowest cost
   - Add frontend components needed for API
   
+Check in at end of recitation
+  
   
   
 
