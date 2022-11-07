@@ -101,6 +101,6 @@ INSERT INTO users (username, email, password) VALUES
 ('rvousden2r', 'rvousden2r@colorado.edu','$2b$10$s/G5hi/KTWS35mqkhtT.J.o.aAM1G5xcFnubHwrm2i20quGy0y5/a');
 
 
-INSERT INTO recipes (recipe_id, recipe_name, recipe_desc) VALUES
-(1, 'Hot dog', 'A classic hot dog on a bun, add ketchup if you want.'),
-(2, 'Hamburger', 'An all american Hamburger, just beef and bread');
+INSERT INTO recipes (recipe_name, recipe_desc) VALUES
+('Hot dog', 'A classic hot dog on a bun, add ketchup if you want.'),
+('Hamburger', 'An all american Hamburger, just beef and bread');
