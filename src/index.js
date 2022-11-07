@@ -121,6 +121,7 @@ app.post('/register', async (req, res) => {
         hash
     ])
     .then(function (data) {
+        console.log(JSON.stringify(data))
         console.log('register successful');
         res.redirect('/login');
       })
