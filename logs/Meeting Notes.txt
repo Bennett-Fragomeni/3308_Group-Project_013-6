@@ -1,8 +1,8 @@
-Meeting 1: 11/1/2022
-
 Team 6
 
 Project Name: FrugalFind
+
+Meeting 1: 11/1/2022
 
 Move lab10.txt into milestones
 
@@ -20,3 +20,27 @@ Make a branch every time that you want to add / change something
 - If there is an issue found, create an issue and assign it to the person who was working on it
 
 Everyone should make equal contributions to the Main Branch
+
+Meeting 2: 11/7/2022
+
+Project board not complete, have to update based, acceptance criteria for user storyies
+
+Add release notes in milestones
+
+Commit to seperate branches
+
+Plan for this week:
+
+   - Finish frontend drafting
+   - Implement required functionalities
+   - Implement recipe functionality
+
+Plan for next week:
+
+  - Implement API
+  - Add search functionality for lowest cost
+  - Add frontend components needed for API
+  
+  
+  
+
