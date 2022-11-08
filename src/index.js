@@ -156,9 +156,30 @@ app.get('/recipes', (req, res) => {
 
 });
 
-app.get('/recipe', (req, res) => {
-  console.log('GET: recipe');
-  res.render('pages/recipe')
+app.get('/view_recipe', (req, res) => {
+  console.log('GET: view_recipe');
+  res.render('pages/view_recipe');
+});
+
+app.post('/view_recipe', (req, res) => {
+  console.log('POST: view_recipe');
+  var recipeID = req.body.recipe_id;
+  const query = 'SELECT * FROM recipes WHERE recipe_id = $1'
+  db.any(query, [
+    recipeID
+  ])
+  .then((data) => {
+    if (!data)
+      return console.log("No recipe found")
+    console.log(data);
+    res.render('pages/view_recipe', {
+      recipe: data[0]
+    })
+  })
+  .catch((error) => {
+    console.log(error);
+    res.redirect('/recipes');
+  })
 });
 
 // POST HOME
