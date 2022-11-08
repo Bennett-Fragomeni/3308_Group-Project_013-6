@@ -144,7 +144,9 @@ app.get('/recipes', (req, res) => {
   db.any(query)
   .then(recipes => {
     console.log(recipes);
-    res.render('pages/recipes'); 
+    res.render('pages/recipes', {
+      recipes: recipes,
+    }); 
   })
   .catch(function (err) {
     res.redirect('/home',
@@ -170,7 +172,7 @@ app.post('/home', (req, res) => {
     ])
     .then(function (data) {
         res.render('/home', 
-          res.recepie = data,
+          res.recipe = data,
           res.message = "Sucessfully got recipe"
         );
       })
