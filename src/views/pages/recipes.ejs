@@ -1,57 +1,43 @@
 <%- include ('../partials/header') %>
 <%- include ('../partials/menu') %>
 <main>
-    <div class="flex flex-col">
-        <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
-                <div class="overflow-hidden">
-                    <table class="min-w-full">
-                    <thead class="border-b">
-                        <tr>
-                        <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                            ID
-                        </th>
-                        <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                            IMG
-                        </th>
-                        <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                            Name
-                        </th>
-                        <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                            Description
-                        </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="border-b">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
-                        <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                            Mark
-                        </td>
-                        <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                            Otto
-                        </td>
-                        <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                            @mdo
-                        </td>
-                        </tr>
-                        <%
-                            if(recipes){
-                            var html = '';
-                                recipes.forEach(function(row){
-                                    html += '<tr class="border-b">';
-                                    html += '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">'+row.recipe_id+'</td>';
-                                    html += '<td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">'+row.recipe_img+'</td>';
-                                    html += '<td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">'+row.recipe_name+'</td>';
-                                    html += '<td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">'+row.recipe_description+'</td>';   
-                                });                  
-                                html += '</tr>';
-                            %>
-                            <%- html %>
-                        <% } %>
-                    </tbody>
-                    </table>
-                </div>
+    <div class="relative flex min-h-screen flex-col content-center overflow-hidden bg-gray-50 py-2 sm:py-12">
+        <div class="relative flex flex-col content-center mx-24">
+            <div class="relative flex">
+                <form class="relative flex flex-row content-center w-full" action="\search_recipes" method="POST">
+                    <div class="mr-2 w-80">
+                        <input
+                            class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-full"
+                            name="search"
+                            type="search"
+                            placeholder="Search recipes, keywords, etc."
+                        />
+                    </div>
+                    <button type="submit" class="flex content-end bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-lg text-white" id="submit_button">
+                        Search
+                    </button>
+                </form>
+            </div>
+            <div class="relative flex mt-5">
+                <table class="relative flex pt-10">
+                    <tr class="relative flex">
+                        <div class="shadow-sm ring-1 ring-gray-900/5 relative flex flex-row rounded-lg bg-white w-full h-52">
+                            <div class="relative flex aspect-square bg-black rounded-l-lg h-full">
+                                <img src="https://images.squarespace-cdn.com/content/v1/53b839afe4b07ea978436183/1608506169128-S6KYNEV61LEP5MS1UIH4/traditional-food-around-the-world-Travlinmad.jpg" alt=""class="object-cover rounded-l-lg ring-1 ring-gray-900/5" />
+                            </div>
+                            <div class="relative flex">
+                                <div class="relative flex my-6 mx-7 w-full flex-col justify-center content-center">
+                                    <div class="relative flex h-1/4 w-full">
+                                        <h1 class="relative flex text-2xl font-bold mb-5">Recipe Name</h1>
+                                    </div>
+                                    <div class="relative flex h-3/4 w-full">
+                                        <p class="w-full h-full break-words text-ellipsis overflow-hidden relative flex text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>

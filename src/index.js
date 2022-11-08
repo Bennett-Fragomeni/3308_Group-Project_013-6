@@ -143,10 +143,8 @@ app.get('/recipes', (req, res) => {
   const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
   db.any(query)
   .then(recipes => {
-    res.render('pages/recipes',
-      recipes,
-      message = "sucessfully got recipes"
-    );    
+    console.log(recipes);
+    res.render('pages/recipes'); 
   })
   .catch(function (err) {
     res.redirect('/home',
@@ -154,6 +152,11 @@ app.get('/recipes', (req, res) => {
     console.log('Failed to GET: /recipes')
   });
 
+});
+
+app.get('/recipe', (req, res) => {
+  console.log('GET: recipe');
+  res.render('pages/recipe')
 });
 
 // POST HOME
