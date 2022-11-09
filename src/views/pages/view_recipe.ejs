@@ -3,14 +3,19 @@
 <main>
     <div class="relative flex min-h-screen flex-col items-center overflow-hidden bg-gray-50 py-6 sm:py-12">
         <div class="relative flex w-5/6 flex-row">
-            <div class="relative flex w-1/2 flex-col mr-5">
+            <div class="relative flex w-1/2 flex-col">
                 <h1 class="relative flex text-5xl font-bold"><%= recipe.recipe_name %></h1>
+<<<<<<< HEAD
                 <div class="relative flex aspect-square my-10 rounded-lg">
                     <img src="<%= recipe.recipe_img_url %>" alt="https://images.squarespace-cdn.com/content/v1/53b839afe4b07ea978436183/1608506169128-S6KYNEV61LEP5MS1UIH4/traditional-food-around-the-world-Travlinmad.jpg" class="relative flex object-cover rounded-lg"/>
+=======
+                <div class="relative flex aspect-square my-10 rounded-l-lg">
+                    <img alt="<%= recipe.recipe_img_url %>" src="https://images.squarespace-cdn.com/content/v1/53b839afe4b07ea978436183/1608506169128-S6KYNEV61LEP5MS1UIH4/traditional-food-around-the-world-Travlinmad.jpg" class="relative flex object-cover rounded-l-lg"/>
+>>>>>>> recipe
                 </div>
             </div>
-            <div class="relative flex w-1/2 flex-row aspect-sqaure ml-5" >
-                <div class="relative flex rounded-lg aspect-sqaure aspect-square flex-shrink bg-gray-200 mt-[88px] mb-10">
+            <div class="relative flex w-1/2 flex-row aspect-sqaure" >
+                <div class="relative w-full flex rounded-r-lg aspect-sqaure aspect-square flex-shrink flex-row justify-between bg-opacity-20 bg-emerald-200 mt-[88px] mb-10">
                     <div class="m-5 relative flex aspect-square w-fit flex-col">
                         <h1 class="text-2xl font-semibold">Ingredients</h1>
                         <div class="mx-5 my-3 relative flex">
@@ -20,6 +25,10 @@
                                 <li>Ingredient 3</li>
                             </ul>
                         </div>
+                    </div>
+                    <div class="relative flex w-1/3 h-full bg-opacity-20 bg-emerald-500 bg- rounded-r-lg">
+                        <h1 class="m-5 text-xl font-semibold">Cooking Time</h1>
+
                     </div>
                 </div>
             </div>
