@@ -102,8 +102,9 @@ INSERT INTO users (username, email, password) VALUES
 
 
 INSERT INTO recipes (recipe_name, recipe_desc, recipe_img_url) VALUES
-('Hot dog', 'A classic hot dog on a bun, add ketchup if you want.','https://cdn.apartmenttherapy.info/image/upload/f_jpg,q_auto:eco,c_fill,g_auto,w_1500,ar_1:1/k%2FEdit%2F2022-07-Hot-Dogs-In-The-Oven%2FHot_Dogs_in_Oven-4'),
-('Hamburger', 'An all american Hamburger, beef, bread, and all the topings you could desire.','https://assets.epicurious.com/photos/57c5c6d9cf9e9ad43de2d96e/master/pass/the-ultimate-hamburger.jpg');
+('Hamburger', 'An all american Hamburger, beef, bread, and all the topings you could desire.','https://assets.epicurious.com/photos/57c5c6d9cf9e9ad43de2d96e/master/pass/the-ultimate-hamburger.jpg'),
+('Hot dog', 'A classic hot dog on a bun, add ketchup if you want.','https://cdn.apartmenttherapy.info/image/upload/f_jpg,q_auto:eco,c_fill,g_auto,w_1500,ar_1:1/k%2FEdit%2F2022-07-Hot-Dogs-In-The-Oven%2FHot_Dogs_in_Oven-4');
+
 
 INSERT INTO ingredients (ingredient_name) VALUES
 ('ground chuck'),

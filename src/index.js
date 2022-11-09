@@ -164,16 +164,30 @@ app.get('/view_recipe', (req, res) => {
 app.post('/view_recipe', (req, res) => {
   console.log('POST: view_recipe');
   var recipeID = req.body.recipe_id;
-  const query = 'SELECT * FROM recipes WHERE recipe_id = $1'
-  db.any(query, [
+  const query1 = 'SELECT * FROM recipes WHERE recipe_id = $1'
+  const query2 = 'SELECT quantity, ingredient_name, unit_name FROM (recipe_to_ingredients ri INNER JOIN ingredients i ON ri.ingredient_id = i.ingredient_id) rii INNER JOIN units u ON rii.unit_id = u.unit_id WHERE recipe_id = $1';
+  db.any(query1, [
     recipeID
   ])
-  .then((data) => {
-    if (!data)
+  .then((data1) => {
+    console.log(data1);
+    if (!data1)
       return console.log("No recipe found")
-    console.log(data);
-    res.render('pages/view_recipe', {
-      recipe: data[0]
+    db.any(query2, [
+      recipeID
+    ])
+    .then((data2) => { 
+      console.log(data2);
+      if (!data2)
+        return console.log("No ingredients found")
+      res.render('pages/view_recipe', {
+        recipe: data1[0],
+        ingredients: data2
+      })
+    })
+    .catch((error) => {
+      console.log(error);
+      res.redirect('/recipes');
     })
   })
   .catch((error) => {
