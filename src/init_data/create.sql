@@ -11,7 +11,7 @@ CREATE TABLE recipes(
     recipe_id SERIAL PRIMARY KEY,
     recipe_name VARCHAR(50) NOT NULL,
     recipe_desc VARCHAR(500) NOT NULL,
-    recipe_img_url VARCHAR(100)
+    recipe_img_url VARCHAR(250)
 );
 
 DROP TABLE IF EXISTS ingredients CASCADE;
@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS recipe_to_ingredients CASCADE;
 CREATE TABLE recipe_to_ingredients(
     recipe_id SERIAL NOT NULL,
     ingredient_id SERIAL NOT NULL,
-    quantity INTEGER NOT NULL,
+    quantity FLOAT NOT NULL,
     unit_id SERIAL NOT NULL
 );
 

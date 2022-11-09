@@ -101,6 +101,47 @@ INSERT INTO users (username, email, password) VALUES
 ('rvousden2r', 'rvousden2r@colorado.edu','$2b$10$s/G5hi/KTWS35mqkhtT.J.o.aAM1G5xcFnubHwrm2i20quGy0y5/a');
 
 
-INSERT INTO recipes (recipe_name, recipe_desc) VALUES
-('Hot dog', 'A classic hot dog on a bun, add ketchup if you want.'),
-('Hamburger', 'An all american Hamburger, just beef and bread');
+INSERT INTO recipes (recipe_name, recipe_desc, recipe_img_url) VALUES
+('Hot dog', 'A classic hot dog on a bun, add ketchup if you want.','https://cdn.apartmenttherapy.info/image/upload/f_jpg,q_auto:eco,c_fill,g_auto,w_1500,ar_1:1/k%2FEdit%2F2022-07-Hot-Dogs-In-The-Oven%2FHot_Dogs_in_Oven-4'),
+('Hamburger', 'An all american Hamburger, beef, bread, and all the topings you could desire.','https://assets.epicurious.com/photos/57c5c6d9cf9e9ad43de2d96e/master/pass/the-ultimate-hamburger.jpg');
+
+INSERT INTO ingredients (ingredient_name) VALUES
+('ground chuck'),
+('ground sirloin'),
+('salt'),
+('pepper'),
+('american cheese'),
+('iceberg lettuce'),
+('tomato'),
+('onion'),
+('burger bun'),
+('ketchup'),
+('hot dog bun'),
+('hot dog');
+
+INSERT INTO units (unit_name) VALUES
+('lb'),
+('slice'),
+('pinch'),
+('teaspoon'),
+('tablespoon'),
+('cup'),
+('');
+
+
+
+INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id, quantity, unit_id) VALUES
+(1, 1, 0.5, 1),
+(1, 2, 0.5, 1),
+(1, 3, 1, 1),
+(1, 4, 0.25, 4),
+(1, 5, 1, 2),
+(1, 6, 3, 2),
+(1, 7, 2, 2),
+(1, 8, 3, 2),
+(1, 9, 1, 7),
+(1, 10, 1, 5),
+(2, 10, 1, 5),
+(2, 11, 1, 7),
+(2, 12, 1, 7);
+
