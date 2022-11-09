@@ -3,7 +3,7 @@
 <main>
     <div class="relative flex min-h-screen flex-col content-center overflow-hidden bg-gray-50 py-2 sm:py-12">
         <div class="relative flex flex-col content-center mx-24">
-            <div class="relative flex">
+            <div class="relative flex flex-row space-between">
                 <form class="relative flex flex-row content-center w-full" action="\search_recipes" method="POST">
                     <div class="mr-2 w-80">
                         <input
@@ -16,6 +16,10 @@
                     <button type="submit" class="flex content-end bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-lg text-white" id="submit_button">
                         Search
                     </button>
+                    </form>
+                </form>
+                <form action="\create_recipe" method="POST">
+                    <button type='submit' class="flex-row justify-center items-center w-40 flex content-end bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-lg text-white">Create Recipe</button>
                 </form>
             </div>
             <% if (recipes) { %>
@@ -27,8 +31,7 @@
                     <div class="relative flex my-3">
                         <tr class="relative flex">
                             <form class="relative flex flex-row content-center w-full" action="\view_recipe" method="POST">
-                                <input class="hidden absolute" readonly="readonly" name="recipe_id" value="<%= recipe.recipe_id %>" />
-                                <button type="submit" class="hover:bg-gray-100 hover:bg-opacity-5 shadow-sm ring-1 ring-gray-900/5 relative flex flex-row rounded-lg bg-white w-full h-52">
+                                <button name="recipe_id" value="<%= recipe.recipe_id %>" type="submit" class="hover:bg-gray-100 hover:bg-opacity-5 shadow-sm ring-1 ring-gray-900/5 relative flex flex-row rounded-lg bg-white w-full h-52">
                                     <div class="relative flex aspect-square bg-black rounded-l-lg h-full">
                                         <img src="<%= recipe.recipe_img_url %>" alt="https://images.squarespace-cdn.com/content/v1/53b839afe4b07ea978436183/1608506169128-S6KYNEV61LEP5MS1UIH4/traditional-food-around-the-world-Travlinmad.jpg" class="object-cover rounded-l-lg ring-1 ring-gray-900/5" />
                                     </div>

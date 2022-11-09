@@ -196,6 +196,16 @@ app.post('/view_recipe', (req, res) => {
   })
 });
 
+app.get('/create_recipe', (req, res) => {
+  console.log('GET: create_recipe');
+  res.render('pages/create_recipe');
+});
+
+app.post('/create_recipe', (req, res) => {
+  console.log('POST: create_recipe');
+  res.render('pages/create_recipe');
+});
+
 // POST HOME
 app.post('/home', (req, res) => {
   // Recepie Search
