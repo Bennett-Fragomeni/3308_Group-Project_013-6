@@ -187,12 +187,8 @@ app.post('/recipes', (req,res) => {
 
 app.get('/view_recipe', (req, res) => {
   console.log('GET: view_recipe');
-  res.render('pages/view_recipe');
-});
-
-app.post('/view_recipe', (req, res) => {
-  console.log('POST: view_recipe');
-  var recipeID = req.body.recipe_id;
+  console.log(req.query.recipe_id);
+  var recipeID = req.query.recipe_id;
   const query1 = 'SELECT * FROM recipes WHERE recipe_id = $1'
   const query2 = 'SELECT quantity, ingredient_name, unit_name FROM (recipe_to_ingredients ri INNER JOIN ingredients i ON ri.ingredient_id = i.ingredient_id) rii INNER JOIN units u ON rii.unit_id = u.unit_id WHERE recipe_id = $1';
   db.any(query1, [
