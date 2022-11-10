@@ -148,6 +148,25 @@ app.get('/home', (req, res) => {
   res.render('pages/home');
 });
 
+// Post /search_recipes
+app.post('/search_recipes', (req,res) => {
+    console.log(req.body.search);
+    const query = 'SELECT * FROM recipes WHERE position(LOWER($1) in LOWER(recipe_name)) > 0 ORDER BY recipes.recipe_id DESC';
+    db.any(query, [
+        req.body.search
+    ])
+    .then(recipes => {
+        console.log(recipes);
+        res.render('pages/recipes', {
+        recipes: recipes,
+        }); 
+    })
+    .catch(function (err) {
+        res.redirect('/recipes');
+        console.log('Failed to POST: /recipes')
+    });
+});
+
 // Get /recipes
 app.get('/recipes', (req, res) => {
   console.log('GET: /recipes');
@@ -160,8 +179,7 @@ app.get('/recipes', (req, res) => {
     }); 
   })
   .catch(function (err) {
-    res.redirect('/home',
-    );
+    res.redirect('/home');
     console.log('Failed to GET: /recipes')
   });
 
@@ -205,10 +223,6 @@ app.post('/view_recipe', (req, res) => {
     console.log(error);
     res.redirect('/recipes');
   })
-});
-
-app.post('/search_recipe', (req,res) => {
-
 });
 
 app.get('/create_recipe', (req, res) => {
