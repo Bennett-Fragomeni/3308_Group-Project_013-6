@@ -46,22 +46,13 @@ app.use(
 // BASE API
 app.get('/', (req, res) =>{
     console.log('GET: /');
-    res.render('pages/login', {
-      message: "Enter  Username and Password"
-    });
-    req.session.user = {
-      username: "",
-      email: "",
-      api_key: process.env.API_KEY
-    }
+    res.render('pages/login')
 });
   
 // LOGIN GET API
 app.get('/login', (req, res) => {
     console.log('GET: /login');
-    res.render('pages/login', {
-      message: "Enter Username and Password"
-    });
+    res.render('pages/login');
 });
 
 // LOGIN POST API
@@ -113,15 +104,7 @@ app.use(auth);*/
 // REGISTER GET API
 app.get('/register', (req, res) => {
     console.log('GET: /register');
-    console.log(req.message);
-    if(req.message){
-      res.render('pages/register');
-    }else{
-      res.render('pages/register', {
-        message: "Create an account"
-      });
-    }
-    
+    res.render('pages/register');
 });
 
 // REGISTER POST 
@@ -150,14 +133,14 @@ app.post('/register', async (req, res) => {
         console.log('register successful');
         res.redirect('/login');
       })
-    .catch(function (err) {
-      res.render('pages/register', {
-        error: true,
-        message: "Failed to register"
+      .catch(function (err) {
+        res.render('pages/register', {
+          error: true,
+          message: "Failed to register"
+        });
+        console.log('Failed to register: ', err);
       });
-      console.log('Failed to register: ', err);
-    });
-});
+  });
 
 // GET HOME
 app.get('/home', (req, res) => {
@@ -222,6 +205,10 @@ app.post('/view_recipe', (req, res) => {
     console.log(error);
     res.redirect('/recipes');
   })
+});
+
+app.post('/search_recipe', (req,res) => {
+
 });
 
 app.get('/create_recipe', (req, res) => {
