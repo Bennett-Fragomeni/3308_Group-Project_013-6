@@ -18,15 +18,28 @@
   <!-- RIGHT MENU ITEMS -->
     <div class="flex flex-row items-center relative">
       <div class="dropdown relative flex-row">
-        <a
+        <% if(auth) { %>
+          <a
           class="dropdown-toggle flex items-center hidden-arrow"
           href="/logout"
           id="dropdownMenuButton1"
           role="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
-        > Logout
-        </a>
+          > Logout
+          </a>
+        <% }else { %>
+          <a
+          class="dropdown-toggle flex items-center hidden-arrow"
+          href="/login"
+          id="dropdownMenuButton1"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          > Login
+          </a>
+        <% }; %>
+
       </div>
     </div>
   </div>

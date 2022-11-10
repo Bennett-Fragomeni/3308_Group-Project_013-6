@@ -29,6 +29,11 @@ app.set('view engine', 'ejs');
 
 app.use(bodyParser.json());
 
+const user = {
+  username: null,
+  email: null
+};
+
 app.use(
     session({
       secret: process.env.SESSION_SECRET,
@@ -43,24 +48,40 @@ app.use(
     })
 );
 
+// AUTHENTICATION
+const auth = (req, res, next) => {
+  if (typeof(req.session.user) == "undefined") {
+    // Default to register as long as current path is not register
+    console.log('AUTHENTICATION redirect /register');
+    return false; //if the session user is undefined return false
+  }
+  else{
+    return true; //if the session user is defined return true
+  }
+};
+
+
 // BASE API
 app.get('/', (req, res) =>{
-    console.log('GET: /');
-    res.render('pages/login', {
-      message: "Enter  Username and Password"
+  console.log('GET: /');
+  if(auth(req)){
+    res.render('pages/home', {
+      auth: true
     });
-    req.session.user = {
-      username: "",
-      email: "",
-      api_key: process.env.API_KEY
-    }
+  }
+  else{
+    res.render('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
 });
   
 // LOGIN GET API
 app.get('/login', (req, res) => {
     console.log('GET: /login');
     res.render('pages/login', {
-      message: "Enter Username and Password"
+      auth: false
     });
 });
 
@@ -77,48 +98,44 @@ app.post('/login', (req, res) => {
             console.log('Incorrect password');
             return res.render('pages/login', {
               message: 'Incorrect username or password',
-              error: true
+              error: true,
+              auth: false
             });
         }
         else {
             console.log('User found and passwords match')
-            req.session.user = {
-                username: data.username,
-                email: data.email
-              };
+            user.username = data[0].username;
+            user.email = data[0].email;
+            
+            req.session.user = user;
             req.session.save();
-            return res.redirect('/home'); // May change what redirects to
+            res.redirect('/home'); // May change what redirects to
         }
       })
       .catch(err => {
         console.log('Cannot find username');
         res.render('pages/login', {
           message: 'Incorrect username or password',
-          error: true
+          error: true,
+          auth: false
         });
       });
 });
 
-/* AUTHENTICATION
-const auth = (req, res, next) => {
-    if (!req.session.user) {
-      // Default to register as long as current path is not register
-      console.log('AUTHENTICATION redirect /register');
-      return res.render('pages/login');
-    }
-    next();
-  };
-app.use(auth);*/
+
 
 // REGISTER GET API
 app.get('/register', (req, res) => {
     console.log('GET: /register');
     console.log(req.message);
     if(req.message){
-      res.render('pages/register');
+      res.render('pages/register', {
+        auth: false
+      });
     }else{
       res.render('pages/register', {
-        message: "Create an account"
+        message: "Create an account",
+        auth: false
       });
     }
     
@@ -134,7 +151,8 @@ app.post('/register', async (req, res) => {
       console.log(req.body.confirmpassword);
       return res.render('pages/register', {
         error: true,
-        message: 'Passwords do not match'
+        message: 'Passwords do not match',
+        auth: false
       });
     }
 
@@ -153,7 +171,8 @@ app.post('/register', async (req, res) => {
     .catch(function (err) {
       res.render('pages/register', {
         error: true,
-        message: "Failed to register"
+        message: "Failed to register",
+        auth: false
       });
       console.log('Failed to register: ', err);
     });
@@ -162,35 +181,66 @@ app.post('/register', async (req, res) => {
 // GET HOME
 app.get('/home', (req, res) => {
   console.log('GET: /home');
-  res.render('pages/home');
+  if(auth(req)){
+    res.render('pages/home', {
+      auth: true
+    });
+  }
+  else{
+    res.render('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
 });
 
 // Get /recipes
 app.get('/recipes', (req, res) => {
   console.log('GET: /recipes');
-  const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
-  db.any(query)
-  .then(recipes => {
-    console.log(recipes);
-    res.render('pages/recipes', {
-      recipes: recipes,
-    }); 
-  })
-  .catch(function (err) {
-    res.redirect('/home',
-    );
-    console.log('Failed to GET: /recipes')
-  });
+  if(auth(req)){
+    const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
+    db.any(query)
+    .then(recipes => {
+      console.log(recipes);
+      res.render('pages/recipes', {
+        recipes: recipes,
+        auth: true
+      }); 
+    })
+    .catch(function (err) {
+      res.redirect('/home',
+      );
+      console.log('Failed to GET: /recipes')
+    });
+  }
+  else{
+    res.render('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
+  
 
 });
 
 app.get('/view_recipe', (req, res) => {
   console.log('GET: view_recipe');
-  res.render('pages/view_recipe');
+  if(auth(req)){
+    res.render('pages/view_recipe', {
+      auth: false
+    });
+  }
+  else{
+    res.render('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
 });
 
 app.post('/view_recipe', (req, res) => {
   console.log('POST: view_recipe');
+  auth();
   var recipeID = req.body.recipe_id;
   const query1 = 'SELECT * FROM recipes WHERE recipe_id = $1'
   const query2 = 'SELECT quantity, ingredient_name, unit_name FROM (recipe_to_ingredients ri INNER JOIN ingredients i ON ri.ingredient_id = i.ingredient_id) rii INNER JOIN units u ON rii.unit_id = u.unit_id WHERE recipe_id = $1';
@@ -210,7 +260,8 @@ app.post('/view_recipe', (req, res) => {
         return console.log("No ingredients found")
       res.render('pages/view_recipe', {
         recipe: data1[0],
-        ingredients: data2
+        ingredients: data2,
+        auth: true
       })
     })
     .catch((error) => {
@@ -226,7 +277,17 @@ app.post('/view_recipe', (req, res) => {
 
 app.get('/create_recipe', (req, res) => {
   console.log('GET: create_recipe');
-  res.render('pages/create_recipe');
+  if(auth(req)){
+    res.render('pages/create_recipe', {
+      auth: true
+    });
+  }
+  else{
+    res.render('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
 });
 
 app.post('/create_recipe', (req, res) => {
@@ -294,14 +355,16 @@ app.post('/home', (req, res) => {
       req.name
     ])
     .then(function (data) {
-        res.render('/home', 
+        res.render('pages/home', 
           res.recipe = data,
-          res.message = "Sucessfully got recipe"
+          res.message = "Sucessfully got recipe",
+          res.auth = true
         );
       })
       .catch(function (err) {
         res.render('pages/home', 
-          res.message = "Unknown recipe"
+          res.message = "Unknown recipe",
+          res.auth = true
         );
         console.log('Failed to search recipe');
       });
@@ -320,12 +383,14 @@ app.post('/home', (req, res) => {
     .then(function (data) {
         res.render('pages/home', 
           ingredients = data,
-          message = "Sucessfully got Ingredients"
+          message = "Sucessfully got Ingredients",
+          res.auth = true
         );
       })
       .catch(function (err) {
         res.render('pages/home', 
-          message = "Problem getting ingredients for recipe"
+          message = "Problem getting ingredients for recipe",
+          res.auth = true
         );
         console.log('Failed to get Ingredients');
       });
@@ -337,7 +402,9 @@ app.post('/home', (req, res) => {
 app.get('/logout', (req, res) => {
   console.log('GET: /logout'); 
   req.session.destroy();
-  res.render('pages/login');
+  res.render('pages/login', {
+    auth: false
+  });
 });
 
 app.listen(3000);
