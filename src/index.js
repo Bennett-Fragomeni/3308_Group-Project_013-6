@@ -149,29 +149,13 @@ app.get('/home', (req, res) => {
 });
 
 // Post /search_recipes
-app.post('/search_recipes', (req,res) => {
-    console.log(req.body.search);
-    const query = 'SELECT * FROM recipes WHERE position(LOWER($1) in LOWER(recipe_name)) > 0 ORDER BY recipes.recipe_id DESC';
-    db.any(query, [
-        req.body.search
-    ])
-    .then(recipes => {
-        console.log(recipes);
-        res.render('pages/recipes', {
-        recipes: recipes,
-        }); 
-    })
-    .catch(function (err) {
-        res.redirect('/recipes');
-        console.log('Failed to POST: /recipes')
-    });
-});
 
 // Get /recipes
 app.get('/recipes', (req, res) => {
-  console.log('GET: /recipes');
   const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
-  db.any(query)
+  db.any(query, [
+    req.body.search
+  ])
   .then(recipes => {
     console.log(recipes);
     res.render('pages/recipes', {
@@ -183,6 +167,24 @@ app.get('/recipes', (req, res) => {
     console.log('Failed to GET: /recipes')
   });
 
+});
+
+app.post('/recipes', (req,res) => {
+    console.log(req.body.search);
+    const query = 'SELECT * FROM recipes WHERE position(LOWER($1) in LOWER(recipe_name)) > 0 ORDER BY recipes.recipe_id DESC';
+    db.any(query, [
+        req.body.search
+    ])
+    .then(recipes => {
+        console.log(recipes);
+        res.render('pages/recipes', {
+            recipes: recipes,
+        }); 
+    })
+    .catch(function (err) {
+        res.redirect('/recipes');
+        console.log('Failed to POST: /recipes')
+    });
 });
 
 app.get('/view_recipe', (req, res) => {
