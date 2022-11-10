@@ -204,11 +204,49 @@ app.get('/create_recipe', (req, res) => {
 app.post('/create_recipe', (req, res) => {
   console.log('POST: create_recipe');
   res.render('pages/create_recipe');
+  const recipe_query = 'INSERT INTO recipes (recipe_name, recipe_desc, recipe_img_url) VALUES ($1,$2,$3)';
+  const ingredient_query = 'INSERT INTO ingredients(ingredient_name) VALUES ($1); INSERT INTO ingredients(ingredient_name) VALUES ($2); INSERT INTO ingredients(ingredient_name) VALUES ($3);';
+  const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id) VALUES (SELECT recipe_id FROM ';
+
+  db.any(recipe_query, [
+    req.body.recipe_name,
+    req.body.recipe_desc,
+    req.body.recipe_img_url
+  ])
+  .then(function (data) {
+    console.log('Recipe added');
+    // Adds recipe to database
+
+    db.any(ingredient_query, [
+      req.body.ingredient_1,
+      req.body.ingredient_2,
+      req.body.ingredient_3
+    ])
+    .then(function (data2) {
+      console.log('Ingredients added');
+      // Adds ingredients to database
+    })
+    .catch(function (err) {
+      res.redirect('/create_recipe');
+      console.log('Failed to add ingredients');
+    });
+    // Adds ingredients to database
+
+    res.redirect('/');
+  })
+  .catch(function (err) {
+    res.redirect('/create_recipe');
+    console.log('Failed to add recipe');
+  });
+
+  //'SELECT quantity, ingredient_name, unit_name FROM 
+  //(recipe_to_ingredients ri INNER JOIN ingredients i ON ri.ingredient_id = i.ingredient_id) rii 
+  //INNER JOIN units u ON rii.unit_id = u.unit_id WHERE recipe_id = $1';
 });
 
 // POST HOME
 app.post('/home', (req, res) => {
-  // Recepie Search
+  // Recipe Search
   if (req.action = "recipe"){ //will probably need to change
     console.log('Recipe Search')
     const query = 'SELECT * FROM recipes WHERE recipes.recipe_name = $1;';
