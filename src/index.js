@@ -46,13 +46,22 @@ app.use(
 // BASE API
 app.get('/', (req, res) =>{
     console.log('GET: /');
-    res.redirect('/login');
+    res.render('pages/login', {
+      message: "Enter  Username and Password"
+    });
+    req.session.user = {
+      username: "",
+      email: "",
+      api_key: process.env.API_KEY
+    }
 });
   
 // LOGIN GET API
 app.get('/login', (req, res) => {
     console.log('GET: /login');
-    res.render('pages/login');
+    res.render('pages/login', {
+      message: "Enter Username and Password"
+    });
 });
 
 // LOGIN POST API
@@ -66,14 +75,15 @@ app.post('/login', (req, res) => {
         const match = await bcrypt.compare(req.body.password, data[0].password);
         if (match == false) {
             console.log('Incorrect password');
-            return res.render('pages/login');
+            return res.render('pages/login', {
+              message: "Incorrect Password"
+            });
         }
         else {
             console.log('User found and passwords match')
             req.session.user = {
                 username: data.username,
-                email: data.email,
-                api_key: process.env.API_KEY,
+                email: data.email
               };
             req.session.save();
             return res.redirect('/home'); // May change what redirects to
@@ -81,7 +91,9 @@ app.post('/login', (req, res) => {
       })
       .catch(err => {
         console.log('Cannot find username');
-        res.redirect('/register');
+        res.render('pages/register', {
+          message: "Cannot find username, Please Register"
+        });
       });
 });
 
@@ -99,37 +111,49 @@ app.use(auth);*/
 // REGISTER GET API
 app.get('/register', (req, res) => {
     console.log('GET: /register');
-    res.render('pages/register');
+    console.log(req.message);
+    if(req.message){
+      res.render('pages/register');
+    }else{
+      res.render('pages/register', {
+        message: "Create an account"
+      });
+    }
+    
 });
 
-// REGISTER POST API
+// REGISTER POST 
 app.post('/register', async (req, res) => {
-    console.log('POST: /register');
+  console.log('POST: /register');
 
-    if (req.body.password != req.body.confirmpassword) {
-      console.log('passwords don\'t match')
-      console.log(req.body.password);
-      console.log(req.body.confirmpassword);
-      return res.redirect('/register');
-    }
-
-    const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3);'; // May need to change depending on database
-    const hash = await bcrypt.hash(req.body.password, 10); // Hashed password
-    db.any(query, [
-        req.body.username,
-        req.body.email,
-        hash
-    ])
-    .then(function (data) {
-        console.log(JSON.stringify(data))
-        console.log('register successful');
-        res.redirect('/login');
-      })
-      .catch(function (err) {
-        res.redirect('/register');
-        console.log('Failed to register');
+  if (req.body.password != req.body.confirmpassword) {
+    console.log(req.body.password);
+    console.log(req.body.confirmpassword);
+    return res.render('pages/register', {
+      message: "Passwords do not match"
+    });
+  }
+  const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3);'; // May need to change depending on database
+  const hash = await bcrypt.hash(req.body.password, 10); // Hashed password
+  db.any(query, [
+      req.body.username,
+      req.body.email,
+      hash
+  ])
+  .then(function (data) {
+      console.log(JSON.stringify(data))
+      console.log('register successful');
+      res.render('pages/login', {
+        message: "Sucesfully Registered"
       });
-  });
+    })
+    .catch(function (err) {
+      res.render('pages/register', {
+        message: "Failed to register"
+      });
+      console.log('Failed to register: ', err);
+    });
+});
 
 // GET HOME
 app.get('/home', (req, res) => {
@@ -137,7 +161,7 @@ app.get('/home', (req, res) => {
   res.render('pages/home');
 });
 
-// Get home/recipes
+// Get /recipes
 app.get('/recipes', (req, res) => {
   console.log('GET: /recipes');
   const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
@@ -203,7 +227,7 @@ app.get('/create_recipe', (req, res) => {
 
 app.post('/create_recipe', (req, res) => {
   console.log('POST: create_recipe');
-  res.render('pages/create_recipe');
+  res.redirect('/recipes');
 });
 
 // POST HOME
@@ -222,7 +246,7 @@ app.post('/home', (req, res) => {
         );
       })
       .catch(function (err) {
-        res.redirect('/home', 
+        res.render('pages/home', 
           res.message = "Unknown recipe"
         );
         console.log('Failed to search recipe');
@@ -240,13 +264,13 @@ app.post('/home', (req, res) => {
       req.name
     ])
     .then(function (data) {
-        res.render('/home', 
+        res.render('pages/home', 
           ingredients = data,
           message = "Sucessfully got Ingredients"
         );
       })
       .catch(function (err) {
-        res.redirect('/home', 
+        res.render('pages/home', 
           message = "Problem getting ingredients for recipe"
         );
         console.log('Failed to get Ingredients');
