@@ -148,8 +148,6 @@ app.get('/home', (req, res) => {
   res.render('pages/home');
 });
 
-// Post /search_recipes
-
 // Get /recipes
 app.get('/recipes', (req, res) => {
   const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
