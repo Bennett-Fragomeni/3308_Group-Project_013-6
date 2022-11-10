@@ -66,7 +66,10 @@ app.post('/login', (req, res) => {
         const match = await bcrypt.compare(req.body.password, data[0].password);
         if (match == false) {
             console.log('Incorrect password');
-            return res.render('pages/login');
+            return res.render('pages/login', {
+              message: 'Incorrect username or password',
+              error: true
+            });
         }
         else {
             console.log('User found and passwords match')
@@ -81,7 +84,10 @@ app.post('/login', (req, res) => {
       })
       .catch(err => {
         console.log('Cannot find username');
-        res.redirect('/register');
+        res.render('pages/login', {
+          message: 'Incorrect username or password',
+          error: true
+        });
       });
 });
 
@@ -110,7 +116,10 @@ app.post('/register', async (req, res) => {
       console.log('passwords don\'t match')
       console.log(req.body.password);
       console.log(req.body.confirmpassword);
-      return res.redirect('/register');
+      return res.render('pages/register', {
+        error: true,
+        message: 'Passwords do not match'
+      });
     }
 
     const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3);'; // May need to change depending on database
@@ -126,8 +135,10 @@ app.post('/register', async (req, res) => {
         res.redirect('/login');
       })
       .catch(function (err) {
-        res.redirect('/register');
-        console.log('Failed to register');
+        res.render('pages/register', {
+          error: true,
+          message: 'Error registering'
+        });
       });
   });
 

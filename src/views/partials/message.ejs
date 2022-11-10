@@ -1,0 +1,7 @@
+<% if (locals.message) { %>
+    <div
+      class="p-5 relative flex bg-red-100 border-red-700 border rounded-md flex-row items-center w-80 h-5 alert-<%- locals.error ? 'danger' : 'success' %>"
+      role="alert">
+      <%= message %>
+    </div>
+<% } %>
