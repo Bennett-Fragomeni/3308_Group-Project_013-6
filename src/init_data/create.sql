@@ -1,9 +1,10 @@
 DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users(
-    user_id SERIAL PRIMARY KEY,
+    user_id SERIAL,
     username VARCHAR(50) NOT NULL,
-    email VARCHAR(200) NOT NULL,
-    password CHAR(60) NOT NULL
+    email VARCHAR(200),
+    password CHAR(60) NOT NULL,
+    CONSTRAINT userPK PRIMARY KEY (user_id)
 );
 
 DROP TABLE IF EXISTS recipes CASCADE;

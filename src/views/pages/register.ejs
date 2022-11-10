@@ -51,6 +51,13 @@
                   required
               />
               </div>
+              <% if (locals.message) { %>
+                <div
+                  class="alert alert-<%- locals.error ? 'danger' : 'success' %>"
+                  role="alert">
+                  <%= message %>
+                </div>
+              <% } %>
               <div class="flex py-2">
                 <button type="submit" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-lg text-white" id="submit_button">
                   Sign Up
