@@ -333,6 +333,26 @@ app.post('/home', (req, res) => {
   }
 });
 
+app.get('/get_ingredient', (req, res) => {
+  const term = 'milk';
+  axios({
+  url: `https://api.kroger.com/v1/products?filter.term=${term}`,
+      method: 'GET',
+      dataType:'json',
+      params: {
+          "apikey": req.session.user.api_key,
+          "keyword": "milk",
+          "size": 1,
+      }
+  })
+  .then(results => {
+     res.render('pages/discover',{results:results});
+  })
+  .catch(error => {
+  // Handle errors
+      console.log('Failed to discover');
+  })
+});
 
 // LOGOUT API
 app.get('/logout', (req, res) => {
