@@ -76,7 +76,8 @@ app.post('/login', (req, res) => {
         if (match == false) {
             console.log('Incorrect password');
             return res.render('pages/login', {
-              message: "Incorrect Password"
+              message: 'Incorrect username or password',
+              error: true
             });
         }
         else {
@@ -91,8 +92,9 @@ app.post('/login', (req, res) => {
       })
       .catch(err => {
         console.log('Cannot find username');
-        res.render('pages/register', {
-          message: "Cannot find username, Please Register"
+        res.render('pages/login', {
+          message: 'Incorrect username or password',
+          error: true
         });
       });
 });
@@ -124,27 +126,36 @@ app.get('/register', (req, res) => {
 
 // REGISTER POST 
 app.post('/register', async (req, res) => {
-  console.log('POST: /register');
+    console.log('POST: /register');
 
-  if (req.body.password != req.body.confirmpassword) {
-    console.log(req.body.password);
-    console.log(req.body.confirmpassword);
-    return res.render('pages/register', {
-      message: "Passwords do not match"
-    });
-  }
-  const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3);'; // May need to change depending on database
-  const hash = await bcrypt.hash(req.body.password, 10); // Hashed password
-  db.any(query, [
-      req.body.username,
-      req.body.email,
-      hash
-  ])
-  .then(function (data) {
-      console.log(JSON.stringify(data))
-      console.log('register successful');
-      res.render('pages/login', {
-        message: "Sucesfully Registered"
+    if (req.body.password != req.body.confirmpassword) {
+      console.log('passwords don\'t match')
+      console.log(req.body.password);
+      console.log(req.body.confirmpassword);
+      return res.render('pages/register', {
+        error: true,
+        message: 'Passwords do not match'
+      });
+    }
+
+    const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3);'; // May need to change depending on database
+    const hash = await bcrypt.hash(req.body.password, 10); // Hashed password
+    db.any(query, [
+        req.body.username,
+        req.body.email,
+        hash
+    ])
+    .then(function (data) {
+        console.log(JSON.stringify(data))
+        console.log('register successful');
+        res.redirect('/login');
+      })
+      .catch(function (err) {
+        res.render('pages/register', {
+          error: true,
+          message: 'Error registering'
+        });
+
       });
     })
     .catch(function (err) {
@@ -227,12 +238,62 @@ app.get('/create_recipe', (req, res) => {
 
 app.post('/create_recipe', (req, res) => {
   console.log('POST: create_recipe');
-  res.redirect('/recipes');
+  res.render('pages/create_recipe');
+  const recipe_query = 'INSERT INTO recipes (recipe_name, recipe_desc, recipe_img_url) VALUES ($1,$2,$3)';
+  const ingredient_query = 'INSERT INTO ingredients(ingredient_name) VALUES ($1); INSERT INTO ingredients(ingredient_name) VALUES ($2); INSERT INTO ingredients(ingredient_name) VALUES ($3);';
+  const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $2); INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $3); INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $4); ';
+
+  db.any(recipe_query, [
+    req.body.recipe_name,
+    req.body.recipe_desc,
+    req.body.recipe_img_url
+  ])
+  .then(function (data) {
+    console.log('Recipe added');
+    // Adds recipe to database
+
+    db.any(ingredient_query, [
+      req.body.ingredient_1,
+      req.body.ingredient_2,
+      req.body.ingredient_3
+    ])
+    .then(function (data2) {
+      console.log('Ingredients added');
+      // Adds ingredients to database
+
+      db.any(ingredient_to_recipe_query, [
+        req.body.recipe_name,
+        req.body.ingredient_1,
+        req.body.ingredient_2,
+        req.body.ingredient_3,
+      ])
+      .then(function (data3) {
+        console.log('recipe_to_ingredients updated');
+        // Updates recipe_to_ingredients table
+      })
+      .catch(function(err) {
+        console.log('Failed to update recipe_to_ingredients');
+      });
+
+
+    })
+    .catch(function (err) {
+      res.redirect('/create_recipe');
+      console.log('Failed to add ingredients');
+    });
+    // Adds ingredients to database
+
+    res.redirect('/');
+  })
+  .catch(function (err) {
+    res.redirect('/create_recipe');
+    console.log('Failed to add recipe');
+  });
 });
 
 // POST HOME
 app.post('/home', (req, res) => {
-  // Recepie Search
+  // Recipe Search
   if (req.action = "recipe"){ //will probably need to change
     console.log('Recipe Search')
     const query = 'SELECT * FROM recipes WHERE recipes.recipe_name = $1;';
