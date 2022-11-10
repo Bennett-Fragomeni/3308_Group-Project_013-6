@@ -179,7 +179,8 @@ app.post('/register', async (req, res) => {
         message: "Failed to register",
         auth: false
 
-      });
+      })
+    });
   });
 
 // GET HOME
