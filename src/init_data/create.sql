@@ -34,3 +34,9 @@ CREATE TABLE units(
     unit_id SERIAL PRIMARY KEY,
     unit_name VARCHAR(50) NOT NULL
 );
+
+DROP TABLE IF EXISTS cart CASCADE;
+CREATE TABLE cart(
+    user_id SERIAL NOT NULL,
+    recipe_id SERIAL NOT NULL
+);
