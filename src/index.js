@@ -150,16 +150,9 @@ app.post('/register', async (req, res) => {
         console.log('register successful');
         res.redirect('/login');
       })
-      .catch(function (err) {
-        res.render('pages/register', {
-          error: true,
-          message: 'Error registering'
-        });
-
-      });
-    })
     .catch(function (err) {
       res.render('pages/register', {
+        error: true,
         message: "Failed to register"
       });
       console.log('Failed to register: ', err);
