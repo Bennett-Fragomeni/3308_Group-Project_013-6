@@ -206,7 +206,7 @@ app.post('/create_recipe', (req, res) => {
   res.render('pages/create_recipe');
   const recipe_query = 'INSERT INTO recipes (recipe_name, recipe_desc, recipe_img_url) VALUES ($1,$2,$3)';
   const ingredient_query = 'INSERT INTO ingredients(ingredient_name) VALUES ($1); INSERT INTO ingredients(ingredient_name) VALUES ($2); INSERT INTO ingredients(ingredient_name) VALUES ($3);';
-  const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id) VALUES (SELECT recipe_id FROM ';
+  const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $2); INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $3); INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $4); ';
 
   db.any(recipe_query, [
     req.body.recipe_name,
@@ -225,6 +225,22 @@ app.post('/create_recipe', (req, res) => {
     .then(function (data2) {
       console.log('Ingredients added');
       // Adds ingredients to database
+
+      db.any(ingredient_to_recipe_query, [
+        req.body.recipe_name,
+        req.body.ingredient_1,
+        req.body.ingredient_2,
+        req.body.ingredient_3,
+      ])
+      .then(function (data3) {
+        console.log('recipe_to_ingredients updated');
+        // Updates recipe_to_ingredients table
+      })
+      .catch(function(err) {
+        console.log('Failed to update recipe_to_ingredients');
+      });
+
+
     })
     .catch(function (err) {
       res.redirect('/create_recipe');
@@ -238,10 +254,6 @@ app.post('/create_recipe', (req, res) => {
     res.redirect('/create_recipe');
     console.log('Failed to add recipe');
   });
-
-  //'SELECT quantity, ingredient_name, unit_name FROM 
-  //(recipe_to_ingredients ri INNER JOIN ingredients i ON ri.ingredient_id = i.ingredient_id) rii 
-  //INNER JOIN units u ON rii.unit_id = u.unit_id WHERE recipe_id = $1';
 });
 
 // POST HOME
