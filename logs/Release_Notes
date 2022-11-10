@@ -1,0 +1,7 @@
+Release Notes -
+
+- Recipes page added where you can search by recipe name and click on individual recipes to view them
+- Log in  and register functionality for personal user accounts with messaging for errors
+- View individual recipes and their ingredients, including type of ingredient, quanity, and units
+- Navbar for navigating between pages
+- Flexible UI design that scales to screen size
