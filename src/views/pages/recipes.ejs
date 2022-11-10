@@ -4,7 +4,7 @@
     <div class="relative flex min-h-screen flex-col content-center overflow-hidden bg-gray-50 py-2 sm:py-12">
         <div class="relative flex flex-col content-center mx-24">
             <div class="relative flex flex-row space-between">
-                <form class="relative flex flex-row content-center w-full" action="\search_recipes" method="POST">
+                <form class="relative flex flex-row content-center w-full" action="/recipes" method="POST">
                     <div class="mr-2 w-80">
                         <input
                             class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-full"
@@ -30,14 +30,13 @@
                         %>
                     <div class="relative flex my-3">
                         <tr class="relative flex">
-                            <form class="relative flex flex-row content-center w-full" action="\view_recipe" method="POST">
-                                <button name="recipe_id" value="<%= recipe.recipe_id %>" type="submit" class="hover:bg-gray-100 hover:bg-opacity-5 shadow-sm ring-1 ring-gray-900/5 relative flex flex-row rounded-lg bg-white w-full h-52">
+                                <a href="<%= '/view_recipe?recipe_id=' + recipe.recipe_id %>" class="hover:bg-gray-100 hover:bg-opacity-5 shadow-sm ring-1 ring-gray-900/5 relative flex flex-row rounded-lg bg-white w-full h-52">
                                     <div class="relative flex aspect-square bg-black rounded-l-lg h-full">
                                         <img src="<%= recipe.recipe_img_url %>" alt="https://images.squarespace-cdn.com/content/v1/53b839afe4b07ea978436183/1608506169128-S6KYNEV61LEP5MS1UIH4/traditional-food-around-the-world-Travlinmad.jpg" class="object-cover rounded-l-lg ring-1 ring-gray-900/5" />
                                     </div>
                                     <div class="relative flex">
                                         <div class="relative flex my-6 mx-7 w-full flex-col">
-                                            <div class="relative flex h-1/4 w-full mb-5">
+                                            <div class="relative flex h-1/4 w-full">
                                                 <h1 class="relative flex text-2xl font-bold"><%= recipe.recipe_name %></h1>
                                             </div>
                                             <div class="relative flex h-3/4 w-full">
@@ -45,8 +44,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </button>
-                            </form>
+                                </a>
                         </tr>
                     </div>
                     <% }) %>

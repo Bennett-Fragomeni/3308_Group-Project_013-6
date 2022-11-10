@@ -63,6 +63,7 @@ const auth = (req, res, next) => {
 
 // BASE API
 app.get('/', (req, res) =>{
+
   console.log('GET: /');
   if(auth(req)){
     res.render('pages/home', {
@@ -80,6 +81,7 @@ app.get('/', (req, res) =>{
 // LOGIN GET API
 app.get('/login', (req, res) => {
     console.log('GET: /login');
+
     res.render('pages/login', {
       auth: false
     });
@@ -127,6 +129,7 @@ app.post('/login', (req, res) => {
 // REGISTER GET API
 app.get('/register', (req, res) => {
     console.log('GET: /register');
+
     console.log(req.message);
     if(req.message){
       res.render('pages/register', {
@@ -139,6 +142,7 @@ app.get('/register', (req, res) => {
       });
     }
     
+
 });
 
 // REGISTER POST 
@@ -168,15 +172,15 @@ app.post('/register', async (req, res) => {
         console.log('register successful');
         res.redirect('/login');
       })
+
     .catch(function (err) {
       res.render('pages/register', {
         error: true,
         message: "Failed to register",
         auth: false
+
       });
-      console.log('Failed to register: ', err);
-    });
-});
+  });
 
 // GET HOME
 app.get('/home', (req, res) => {
@@ -196,6 +200,7 @@ app.get('/home', (req, res) => {
 
 // Get /recipes
 app.get('/recipes', (req, res) => {
+
   console.log('GET: /recipes');
   if(auth(req)){
     const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
@@ -223,25 +228,31 @@ app.get('/recipes', (req, res) => {
 
 });
 
-app.get('/view_recipe', (req, res) => {
-  console.log('GET: view_recipe');
-  if(auth(req)){
-    res.render('pages/view_recipe', {
-      auth: false
+
+
+app.post('/recipes', (req,res) => {
+    console.log(req.body.search);
+    const query = 'SELECT * FROM recipes WHERE position(LOWER($1) in LOWER(recipe_name)) > 0 ORDER BY recipes.recipe_id DESC';
+    db.any(query, [
+        req.body.search
+    ])
+    .then(recipes => {
+        console.log(recipes);
+        res.render('pages/recipes', {
+            recipes: recipes,
+        }); 
+    })
+    .catch(function (err) {
+        res.redirect('/recipes');
+        console.log('Failed to POST: /recipes')
     });
-  }
-  else{
-    res.render('pages/login', {
-      message: "Please Login Before Continuing",
-      auth: false
-    });
-  }
 });
 
-app.post('/view_recipe', (req, res) => {
-  console.log('POST: view_recipe');
-  auth();
-  var recipeID = req.body.recipe_id;
+app.get('/view_recipe', (req, res) => {
+  console.log('GET: view_recipe');
+  console.log(req.query.recipe_id);
+  var recipeID = req.query.recipe_id;
+
   const query1 = 'SELECT * FROM recipes WHERE recipe_id = $1'
   const query2 = 'SELECT quantity, ingredient_name, unit_name FROM (recipe_to_ingredients ri INNER JOIN ingredients i ON ri.ingredient_id = i.ingredient_id) rii INNER JOIN units u ON rii.unit_id = u.unit_id WHERE recipe_id = $1';
   db.any(query1, [
@@ -292,7 +303,7 @@ app.get('/create_recipe', (req, res) => {
 
 app.post('/create_recipe', (req, res) => {
   console.log('POST: create_recipe');
-  res.render('pages/create_recipe');
+  console.log(req.body.recipe_name);
   const recipe_query = 'INSERT INTO recipes (recipe_name, recipe_desc, recipe_img_url) VALUES ($1,$2,$3)';
   const ingredient_query = 'INSERT INTO ingredients(ingredient_name) VALUES ($1); INSERT INTO ingredients(ingredient_name) VALUES ($2); INSERT INTO ingredients(ingredient_name) VALUES ($3);';
   const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $2); INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $3); INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $4); ';
@@ -397,6 +408,26 @@ app.post('/home', (req, res) => {
   }
 });
 
+app.get('/get_ingredient', (req, res) => {
+  const term = 'milk';
+  axios({
+  url: `https://api.kroger.com/v1/products?filter.term=${term}`,
+      method: 'GET',
+      dataType:'json',
+      params: {
+          "apikey": req.session.user.api_key,
+          "keyword": "milk",
+          "size": 1,
+      }
+  })
+  .then(results => {
+     res.render('pages/discover',{results:results});
+  })
+  .catch(error => {
+  // Handle errors
+      console.log('Failed to discover');
+  })
+});
 
 // LOGOUT API
 app.get('/logout', (req, res) => {

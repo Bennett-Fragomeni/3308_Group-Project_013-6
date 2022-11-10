@@ -1,7 +1,76 @@
 <%- include ('../partials/header') %>
 <%- include ('../partials/menu') %>
 <main>
-    <div>
+    <div
+        class="relative bg-white px-6 pt-8 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-10"
+      >
+        <form class="relative flex-col space-y-3" action="\create_recipe" method="POST">
+            <h1 class="text-2xl font-bold mb-5">Create Recipe</h1>
+            <%- include ('../partials/message') %>
+            <div class="">
+              <input
+              class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-80"
+              name="recipe_name"
+              type="recipe_name"
+              placeholder="Recipe name"
+              required
+              />
+            </div>
+            <div class="">
+              <input
+                class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-80"
+                name="recipe_desc"
+                type="recipe_desc"
+                placeholder="Recipe description"
+                required
+              />
+            </div>
+            <div class="">
+                <input
+                  class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-80"
+                  name="recipe_img_url"
+                  type="recipe_img_url"
+                  placeholder="Recipe Image Url"
+                  required
+                />
+            </div>
+            <div class="">
+                <input
+                  class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-80"
+                  name="ingredient_1"
+                  type="ingredient_1"
+                  placeholder="First ingredient"
+                  required
+                />
+            </div>
+            <div class="">
+                <input
+                  class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-80"
+                  name="ingredient_2"
+                  type="ingredient_2"
+                  placeholder="Second ingredient"
+                  required
+                />
+            </div>
+            <div class="">
+                <input
+                  class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-80"
+                  name="ingredient_3"
+                  type="ingredient_3"
+                  placeholder="Third ingredient"
+                  required
+                />
+            </div>
+            <div class="flex py-2">
+              <button type="submit" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-lg text-white" id="submit_button">
+                Add recipe
+              </button>
+            </div>
+            <div class="flex justify-center text-md">
+              <text>Return to recipes</text>
+              <a href="/recipes" method="GET" class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">Recipes</a>
+            </div>
+        </form>
     </div>
 </main>
 

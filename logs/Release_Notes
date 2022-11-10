@@ -1,0 +1,20 @@
+Release Notes (11/10/22)
+
+Features:
+
+- Recipes page added where you can search by recipe name and click on individual recipes to view them
+- Log in  and register functionality for personal user accounts with messaging for errors
+- View individual recipes and their ingredients, including type of ingredient, quanity, and units
+- Navbar for navigating between pages
+- Flexible UI design that scales to screen size
+- Functionality for creating custom user recipes
+
+Bug Fixes and Details:
+
+- Fixes on login and register.ejs to make auth work properly with database
+- Added test data to database recipes, units, recipe_to_ingredients, and ingredients table
+- Fixed flexing for frontend pages
+- Added view_recipe and added changes to make it query based over form based
+- Fixes for checking authentication
+- Added queries for search functionalities to search for substring in recipe name
+- Added create_recipe form functionality
