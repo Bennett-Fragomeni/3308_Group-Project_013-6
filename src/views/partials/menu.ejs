@@ -1,27 +1,26 @@
-<nav class="relative w-full flex flex-wrap flex-row items-center justify-between py-3 bg-gray-100 text-gray-500 hover:text-gray-700 focus:text-gray-700 shadow-lg">
-  <div class="container-fluid w-full flex-row flex flex-wrap items-center justify-between px-6">
+<nav class="relative w-full flex flex-row items-center py-3 bg-sky-50 shadow-lg">
+  <div class="w-full flex-row flex items-center justify-between px-6">
     <!-- LEFT MENU ITEMS -->
-    <div class="navbar-collapse flex-grow items-center">
-      <a class="text-xl text-black font-semibold" href="/">FrugalFinder</a>
-      <ul class="navbar-nav flex-col pl-0 mr-auto">
-        <li class="nav-item pr-2">
-          <a class="nav-link active" aria-current="page" href="/home">Home</a>
+      <a class="text-xl text-black font-semibold pr-5 " href="/">FrugalFinder</a>
+      <ul class="navbar-nav flex flex-row pl-0 mr-auto">
+        <li class="nav-item pr-3">
+          <a class="nav-link active text-black hover:text-gray-700 focus:text-gray-700" aria-current="page" href="/home">Home</a>
         </li>
-        <li class="nav-item pr-2">
-          <a class="nav-link text-gray-500 hover:text-gray-700 focus:text-gray-700 p-0" href="/recipes">Recipes</a>
+        <li class="nav-item pr-3">
+          <a class="nav-link text-black hover:text-gray-700 focus:text-gray-700" href="/recipes">Recipes</a>
         </li>
-        <li class="nav-item pr-2">
-          <a class="nav-link text-gray-500 hover:text-gray-700 focus:text-gray-700 p-0" href="/register">PLACEHOLDER</a>
+        <li class="nav-item pr-3">
+          <a class="nav-link text-black hover:text-gray-700 focus:text-gray-700" href="/register">Create Recipe</a>
         </li>
       </ul>
     </div>
   <!-- RIGHT MENU ITEMS -->
-    <div class="flex flex-row items-center relative gap-2">
+    <div class="flex flex-row items-center relative gap-2 pr-5">
       <%- include ('./cart') %>
       <div class="dropdown relative flex-row">
         <% if(auth) { %>
           <a
-          class="dropdown-toggle flex items-center hidden-arrow"
+          class="dropdown-toggle flex items-center hidden-arrow text-black hover:text-gray-700 focus:text-gray-700"
           href="/logout"
           id="dropdownMenuButton1"
           role="button"
@@ -31,7 +30,7 @@
           </a>
         <% }else { %>
           <a
-          class="dropdown-toggle flex items-center hidden-arrow"
+          class="dropdown-toggle flex items-center hidden-arrow text-black hover:text-gray-700 focus:text-gray-700"
           href="/login"
           id="dropdownMenuButton1"
           role="button"
