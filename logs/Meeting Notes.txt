@@ -42,7 +42,22 @@ Plan for next week:
   - Add frontend components needed for API
   
 Check in at end of recitation
-  
-  
+
+Meeting 3: 11/14/20222
+
+-All of us much show commits by reciation on Thursday
+
+Plan for this week: 
+-Complete release notes for week three
+-Complete all sections in ReadMe
+-Make all commits to main branch, no extra banches. 
+-Add story points for user stories. 
+-Go through project board and make sure that all user stories are complete.
+
+Plan for next week:
+-Last week, must be ready to test
+-Thusday after break must be ready to present
+
+Check in at end of recitation
   
 
