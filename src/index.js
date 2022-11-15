@@ -441,7 +441,8 @@ app.get('/get_ingredient', (req, res) => {
     .then((results) => {
       console.log(results)
       res.render('pages/home', {
-        results: results
+        results: results,
+        auth: true
       });
     })
     .catch(error => {
