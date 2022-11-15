@@ -447,13 +447,13 @@ app.get('/get_ingredient', (req, res) => {
     .catch(error => {
     // Handle errors
         console.log('Failed to discover');
-        //console.log(error);
+        console.log(error);
     })
   })
   .catch(error => {
     // Handle errors
       console.log('Failed to get access token');
-      //console.log(error);
+      console.log(error);
   })
 });
 
