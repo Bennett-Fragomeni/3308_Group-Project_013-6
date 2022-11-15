@@ -411,11 +411,10 @@ app.post('/home', (req, res) => {
 });
 
 app.get('/get_ingredient', (req, res) => {
-  console.log(`${btoa(process.env.CLIENT_ID.concat(':').concat(process.env.CLIENT_SECRET))}`)
   axios({
     "async": true,
     "crossDomain": true,
-    "url": "https://api.kroger.com/v1/connect/oauth2/token",
+    "url": "https://api-ce.kroger.com/v1/connect/oauth2/token",
     "method": "POST",
     "headers": {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -426,35 +425,35 @@ app.get('/get_ingredient', (req, res) => {
       "scope": "product.compact"
     }
   })
-  .then((data) => {
+  .then((output) => {
     console.log('got access token succesfully')
     const term = 'milk';
     axios({
       "async": true,
       "crossDomain": true,
-      "url": "https://api.kroger.com/v1/products?filter.term={{milk}}", //&filter.locationId={{LOCATION_ID}}
+      "url": "https://api-ce.kroger.com/v1/products?filter.term={{milk}}", //&filter.locationId={{LOCATION_ID}}
       "method": "GET",
       "headers": {
         "Accept": "application/json",
-        "Authorization": `Bearer ${data.accessToken}`
+        "Authorization": `Bearer ${output.data.access_token}`
       }
     })
     .then((results) => {
-      console.log(results);
-      res.render('pages/recipes', {
+      console.log(results)
+      res.render('pages/home', {
         results: results
       });
     })
     .catch(error => {
     // Handle errors
         console.log('Failed to discover');
-        console.log(error);
+        //console.log(error);
     })
   })
   .catch(error => {
     // Handle errors
       console.log('Failed to get access token');
-      console.log(error);
+      //console.log(error);
   })
 });
 
