@@ -241,6 +241,7 @@ app.post('/recipes', (req,res) => {
         console.log(recipes);
         res.render('pages/recipes', {
             recipes: recipes,
+            auth: true
         }); 
     })
     .catch(function (err) {
@@ -410,23 +411,50 @@ app.post('/home', (req, res) => {
 });
 
 app.get('/get_ingredient', (req, res) => {
-  const term = 'milk';
+  console.log(`${btoa(process.env.CLIENT_ID.concat(':').concat(process.env.CLIENT_SECRET))}`)
   axios({
-  url: `https://api.kroger.com/v1/products?filter.term=${term}`,
-      method: 'GET',
-      dataType:'json',
-      params: {
-          "apikey": req.session.user.api_key,
-          "keyword": "milk",
-          "size": 1,
-      }
+    "async": true,
+    "crossDomain": true,
+    "url": "https://api.kroger.com/v1/connect/oauth2/token",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Authorization": `Basic ${btoa(process.env.CLIENT_ID.concat(':').concat(process.env.CLIENT_SECRET))}`
+    },
+    "data": {
+      "grant_type": "client_credentials",
+      "scope": "product.compact"
+    }
   })
-  .then(results => {
-     res.render('pages/discover',{results:results});
+  .then((data) => {
+    console.log('got access token succesfully')
+    const term = 'milk';
+    axios({
+      "async": true,
+      "crossDomain": true,
+      "url": "https://api.kroger.com/v1/products?filter.term={{milk}}", //&filter.locationId={{LOCATION_ID}}
+      "method": "GET",
+      "headers": {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${data.accessToken}`
+      }
+    })
+    .then((results) => {
+      console.log(results);
+      res.render('pages/recipes', {
+        results: results
+      });
+    })
+    .catch(error => {
+    // Handle errors
+        console.log('Failed to discover');
+        console.log(error);
+    })
   })
   .catch(error => {
-  // Handle errors
-      console.log('Failed to discover');
+    // Handle errors
+      console.log('Failed to get access token');
+      console.log(error);
   })
 });
 
