@@ -309,6 +309,9 @@ app.post('/create_recipe', (req, res) => {
   const recipe_query = 'INSERT INTO recipes (recipe_name, recipe_desc, recipe_img_url) VALUES ($1,$2,$3)';
   const ingredient_query = 'INSERT INTO ingredients(ingredient_name) VALUES ($1); INSERT INTO ingredients(ingredient_name) VALUES ($2); INSERT INTO ingredients(ingredient_name) VALUES ($3);';
   const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id,quantity) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $2,$5); INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id, quantity) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $3,$6); INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id,quantity) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $4,$7); ';
+  let ingredients = req.body.ingredient;
+  console.log(ingredients);
+
 
   db.any(recipe_query, [
     req.body.recipe_name,
