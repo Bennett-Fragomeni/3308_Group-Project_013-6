@@ -350,6 +350,29 @@ app.get('/get_ingredient', (req, res) => {
   })
 });
 
+// This API call is for the shopping_cart
+// It will return the recipies that the user has selected
+
+// app.get('/load_cart', (req, res) => {
+//   console.log('GET: load_cart');
+//   const subquery = 'SELECT * FROM cart, WHERE cart.user_id = $1;';
+//   const query = 'SELECT * FROM recipies WHERE (' + subquery + ')';
+//   db.any(query, [
+//     req.session.user.user_id
+//   ])
+//   .then(function (data) {
+//     res.render('pages/load_cart', {
+//     });
+//   })
+//   .catch(function (err) {
+//     res.render('pages/load_cart', {
+//       message: 'Failed to get cart'
+//     });
+//     console.log('Failed to get cart');
+//   });
+// });
+
+
 // LOGOUT API
 app.get('/logout', (req, res) => {
   console.log('GET: /logout'); 

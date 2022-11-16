@@ -3,7 +3,7 @@ CREATE TABLE users(
     user_id SERIAL,
     username VARCHAR(50) NOT NULL,
     email VARCHAR(200),
-    password CHAR(60) NOT NULL,
+    password VARCHAR(60) NOT NULL,
     CONSTRAINT userPK PRIMARY KEY (user_id)
 );
 
