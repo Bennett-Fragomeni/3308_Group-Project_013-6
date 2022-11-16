@@ -312,6 +312,7 @@ app.post('/create_recipe', (req, res) => {
   let ingredients = req.body.ingredient;
   console.log(ingredients);
 
+
   db.any(recipe_query, [
     req.body.recipe_name,
     req.body.recipe_desc,
