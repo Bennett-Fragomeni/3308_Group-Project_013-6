@@ -308,11 +308,9 @@ app.post('/create_recipe', (req, res) => {
   console.log(req.body.recipe_name);
   console.log(req.body);
   const recipe_query = 'INSERT INTO recipes (recipe_name, recipe_desc, recipe_img_url) VALUES ($1,$2,$3)';
-  const ingredient_query = 'INSERT INTO ingredients(ingredient_name) VALUES ($1); INSERT INTO ingredients(ingredient_name) VALUES ($2); INSERT INTO ingredients(ingredient_name) VALUES ($3);';
-  const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id,quantity) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $2,$5); INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id, quantity) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $3,$6); INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id,quantity) VALUES (SELECT recipe_id FROM recipes WHERE recipe_name = $1, SELECT ingredient_id FROM ingredients WHERE ingredient_name = $4,$7); ';
-  let ingredients = req.body.ingredient;
-  console.log(ingredients);
-
+  const ingredient_query = 'INSERT INTO ingredients(ingredient_name) VALUES ($1);';
+  const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id,quantity) VALUES ( (SELECT recipe_id FROM recipes WHERE recipe_name = $1 LIMIT 1), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = $2 LIMIT 1),$3);'
+  let ingredients = req.body.ingredients;
 
   db.any(recipe_query, [
     req.body.recipe_name,
@@ -323,10 +321,9 @@ app.post('/create_recipe', (req, res) => {
     console.log('Recipe added');
     // Adds recipe to database
 
+    ingredients.forEach(ing => {
     db.any(ingredient_query, [
-      req.body.ingredient_1,
-      req.body.ingredient_2,
-      req.body.ingredient_3
+      ing.ingredientName
     ])
     .then(function (data2) {
       console.log('Ingredients added');
@@ -334,12 +331,8 @@ app.post('/create_recipe', (req, res) => {
 
       db.any(ingredient_to_recipe_query, [
         req.body.recipe_name,
-        req.body.ingredient_1,
-        req.body.ingredient_2,
-        req.body.ingredient_3,
-        req.body.quantity_1,
-        req.body.quantity_2,
-        req.body.quantity_3
+        ing.ingredientName,
+        ing.quantity
       ])
       .then(function (data3) {
         console.log('recipe_to_ingredients updated');
@@ -356,6 +349,8 @@ app.post('/create_recipe', (req, res) => {
       console.log('Failed to add ingredients');
     });
     // Adds ingredients to database
+
+  });
 
     res.redirect('/');
   })
