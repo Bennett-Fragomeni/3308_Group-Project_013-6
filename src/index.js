@@ -16,6 +16,74 @@ const dbConfig = {
 
 const db = pgp(dbConfig);
 
+function getPriceByIngredientName(ingredientName) {
+  axios({
+    "async": true,
+    "crossDomain": true,
+    "url": "https://api-ce.kroger.com/v1/connect/oauth2/token",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Authorization": `Basic ${btoa(process.env.CLIENT_ID.concat(':').concat(process.env.CLIENT_SECRET))}`
+    },
+    "data": {
+      "grant_type": "client_credentials",
+      "scope": "product.compact"
+    }
+  })
+  .then((output) => {
+    console.log('got access token succesfully')
+    axios({
+      "async": true,
+      "crossDomain": true,
+      "url": `https://api-ce.kroger.com/v1/products?filter.term=${ingredientName}`, //&filter.locationId={{LOCATION_ID}}
+      "method": "GET",
+      "headers": {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${output.data.access_token}`
+      }
+    })
+    .then((results) => {
+      var lowestPrice = 0
+      results = results.data.data;
+
+      if (results == [])
+        return 'No price found';
+
+      results.forEach((ingredient) => {
+        ingredient.items.forEach((item) => {
+          if (!('price' in item))
+            return;
+
+          console.log(item.price)
+  
+          if (item.price < lowestPrice || lowestPrice == 0)
+            lowestPrice = item.price
+        })
+      });
+
+      if (lowestPrice == 0)
+        return 'No price found';
+
+      console.log(lowestPrice)
+
+      return lowestPrice
+    })
+    .catch(error => {
+    // Handle errors
+        console.log('Failed to discover');
+        console.log(error);
+    })
+  })
+  .catch(error => {
+    // Handle errors
+      console.log('Failed to get access token');
+      console.log(error);
+  })
+
+  return "Price not found";
+}
+
 db.connect()
   .then(obj => {
     console.log('Database connection successful'); // you can view this message in the docker compose logs
@@ -257,18 +325,25 @@ app.get('/view_recipe', (req, res) => {
 
   const query1 = 'SELECT * FROM recipes WHERE recipe_id = $1'
   const query2 = 'SELECT quantity, ingredient_name, unit_name FROM (recipe_to_ingredients ri INNER JOIN ingredients i ON ri.ingredient_id = i.ingredient_id) rii INNER JOIN units u ON rii.unit_id = u.unit_id WHERE recipe_id = $1';
+
   db.any(query1, [
     recipeID
   ])
   .then((data1) => {
     console.log(data1);
-    if (!data1)
-      return console.log("No recipe found")
+    if (!data1) {
+      console.log("No recipe found")
+      return res.redirect('/recipes');
+    }
     db.any(query2, [
       recipeID
     ])
     .then((data2) => { 
       console.log(data2);
+      data2.forEach(async (ingredientEntry) => {
+        ingredientEntry.price = await getPriceByIngredientName(ingredientEntry.ingredient_name);
+        console.log(ingredientEntry);
+      })
       if (!data2)
         return console.log("No ingredients found")
       res.render('pages/view_recipe', {
@@ -291,7 +366,7 @@ app.get('/view_recipe', (req, res) => {
 app.get('/create_recipe', (req, res) => {
   console.log('GET: create_recipe');
   if(auth(req)){
-    res.render('pages/create_recipe', {
+      res.render('pages/create_recipe', {
       auth: true
     });
   }
@@ -415,54 +490,6 @@ app.post('/home', (req, res) => {
         console.log('Failed to get Ingredients');
       });
   }
-});
-
-app.get('/get_ingredient', (req, res) => {
-  axios({
-    "async": true,
-    "crossDomain": true,
-    "url": "https://api-ce.kroger.com/v1/connect/oauth2/token",
-    "method": "POST",
-    "headers": {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Authorization": `Basic ${btoa(process.env.CLIENT_ID.concat(':').concat(process.env.CLIENT_SECRET))}`
-    },
-    "data": {
-      "grant_type": "client_credentials",
-      "scope": "product.compact"
-    }
-  })
-  .then((output) => {
-    console.log('got access token succesfully')
-    const term = 'milk';
-    axios({
-      "async": true,
-      "crossDomain": true,
-      "url": "https://api-ce.kroger.com/v1/products?filter.term={{milk}}", //&filter.locationId={{LOCATION_ID}}
-      "method": "GET",
-      "headers": {
-        "Accept": "application/json",
-        "Authorization": `Bearer ${output.data.access_token}`
-      }
-    })
-    .then((results) => {
-      console.log(results)
-      res.render('pages/home', {
-        results: results,
-        auth: true
-      });
-    })
-    .catch(error => {
-    // Handle errors
-        console.log('Failed to discover');
-        console.log(error);
-    })
-  })
-  .catch(error => {
-    // Handle errors
-      console.log('Failed to get access token');
-      console.log(error);
-  })
 });
 
 // LOGOUT API
