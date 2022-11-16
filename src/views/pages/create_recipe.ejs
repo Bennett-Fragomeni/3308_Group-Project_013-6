@@ -3,28 +3,37 @@
 <main>
     <script>
       function addIngredientInput() {
-        console.log('bro');
         var newQuantityInput = document.createElement("input");
         var newUnitInput = document.createElement("input");
         var newIngredientInput = document.createElement("input");
+        var outerContainer = document.getElementById("ingredientContainer");
+
+        newID = outerContainer.children[outerContainer.children.length - 1].id + 1
+
         newQuantityInput.classList.add("flex", "h-5", "mt-5", "ring-1", "ring-gray-900/5", "rounded-lg", "p-5", "w-20");
         newUnitInput.classList.add("flex", "h-5", "mt-5", "ring-1", "ring-gray-900/5", "rounded-lg", "p-5", "w-20");
         newIngredientInput.classList.add("flex", "h-5", "mt-5", "ring-1", "ring-gray-900/5", "rounded-lg", "p-5", "w-50");
+        
+        newQuantityInput.name = `ingredients[${newID}][quantity]`;
+        newUnitInput.name = `ingredients[${newID}][unit]`;
+        newIngredientInput.name = `ingredients[${newID}][ingredientName]`;
+
         newQuantityInput.placeholder = "Num";
         newUnitInput.placeholder = "Unit";
         newIngredientInput.placeholder = "Ingredient Name";
-        newQuantityInput.name = "quantity";
-        newUnitInput.name = "unit";
-        newIngredientInput.name = "ingredient";
+
         newQuantityInput.type = "quantity";
         newUnitInput.type = "unit";
         newIngredientInput.type = "ingredient";
+
         var innerContainer = document.createElement("div");
         innerContainer.classList.add("relative", "flex", "flex-row", "space-x-3");
+        innerContainer.tagName = 'ingredientInput'
+        innerContainer.id = newID
         innerContainer.appendChild(newQuantityInput)
         innerContainer.appendChild(newUnitInput)
         innerContainer.appendChild(newIngredientInput)
-        var outerContainer = document.getElementById("ingredientContainer");
+
         outerContainer.appendChild(innerContainer);
       }
     </script>
@@ -64,24 +73,24 @@
             <h1>Ingredients:</h1>
             <div class="ml-5 space-y-3" >
                 <div class="" id="ingredientContainer">
-                  <div class="relative flex flex-row space-x-3">
+                  <div class="relative flex flex-row space-x-3" tagName="0">
                     <input
                       class="relative flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-20"
-                      name="quantity"
+                      name="ingredients[0][quantity]"
                       type="quantity"
                       placeholder="Quantity"
                       required
                     />
                     <input
                       class="relative flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-20"
-                      name="unit"
+                      name="ingredients[0][uni']"
                       type="unit"
                       placeholder="Unit"
                       required
                     />
                     <input
                       class="relative flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-50"
-                      name="ingredient"
+                      name="ingredients[0][ingredientName]"
                       type="ingredient"
                       placeholder="Ingredient"
                       required
@@ -91,9 +100,7 @@
                 <button type="button" onclick="addIngredientInput()" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-lg text-white">
                   +
                 </button>
-              </div>
-            </div>
-            
+              </div>           
             <div class="flex py-2">
               <button type="submit" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-lg text-white" id="submit_button">
                 Add recipe
