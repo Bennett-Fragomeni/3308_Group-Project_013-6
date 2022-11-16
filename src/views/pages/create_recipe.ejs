@@ -10,9 +10,15 @@
         newQuantityInput.classList.add("flex", "h-5", "mt-5", "ring-1", "ring-gray-900/5", "rounded-lg", "p-5", "w-20");
         newUnitInput.classList.add("flex", "h-5", "mt-5", "ring-1", "ring-gray-900/5", "rounded-lg", "p-5", "w-20");
         newIngredientInput.classList.add("flex", "h-5", "mt-5", "ring-1", "ring-gray-900/5", "rounded-lg", "p-5", "w-50");
-        newQuantityInput.placeholder = "Num"
-        newUnitInput.placeholder = "Unit"
-        newIngredientInput.placeholder = "Ingredient Name"
+        newQuantityInput.placeholder = "Num";
+        newUnitInput.placeholder = "Unit";
+        newIngredientInput.placeholder = "Ingredient Name";
+        newQuantityInput.name = "quantity";
+        newUnitInput.name = "unit";
+        newIngredientInput.name = "ingredient";
+        newQuantityInput.type = "quantity";
+        newUnitInput.type = "unit";
+        newIngredientInput.type = "ingredient";
         var innerContainer = document.createElement("div");
         innerContainer.classList.add("relative", "flex", "flex-row", "space-x-3");
         innerContainer.appendChild(newQuantityInput)
