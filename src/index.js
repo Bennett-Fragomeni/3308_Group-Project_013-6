@@ -418,7 +418,9 @@ app.post('/create_recipe', (req, res) => {
   console.log(req.body);
   const recipe_query = 'INSERT INTO recipes (recipe_name, recipe_desc, recipe_img_url) VALUES ($1,$2,$3)';
   const ingredient_query = 'INSERT INTO ingredients(ingredient_name) VALUES ($1);';
-  const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id,quantity) VALUES ( (SELECT recipe_id FROM recipes WHERE recipe_name = $1 LIMIT 1), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = $2 LIMIT 1),$3);'
+  const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id,quantity,unit_id) VALUES ( (SELECT recipe_id FROM recipes WHERE recipe_name = $1 LIMIT 1), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = $2 LIMIT 1),$3,(SELECT unit_id FROM units WHERE unit_name = $4 LIMIT 1) );';
+  const unit_query = 'INSERT INTO units (unit_name) VALUES ($1);';
+  // Queries to add ingredients and recipes, as well as units and update the ingredient_to_recipe table.
   let ingredients = req.body.ingredients;
 
   db.any(recipe_query, [
@@ -438,17 +440,29 @@ app.post('/create_recipe', (req, res) => {
       console.log('Ingredients added');
       // Adds ingredients to database
 
-      db.any(ingredient_to_recipe_query, [
-        req.body.recipe_name,
-        ing.ingredientName,
-        ing.quantity
+      db.any(unit_query, [
+        ing.unit
       ])
       .then(function (data3) {
-        console.log('recipe_to_ingredients updated');
+        console.log('Updated units');
         // Updates recipe_to_ingredients table
+
+        db.any(ingredient_to_recipe_query, [
+          req.body.recipe_name,
+          ing.ingredientName,
+          ing.quantity,
+          ing.unit
+        ])
+        .then(function (data4) {
+          console.log('recipe_to_ingredients updated');
+          // Updates units using query
+        })
+        .catch(function(err) {
+          console.log('Failed to update recipe_to_ingredients')
+        });
       })
       .catch(function(err) {
-        console.log('Failed to update recipe_to_ingredients');
+        console.log('Failed to update units');
       });
 
 
