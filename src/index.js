@@ -132,7 +132,6 @@ app.get('/', (req, res) =>{
   }
   else{
     res.render('pages/login', {
-      message: "Please Login Before Continuing",
       auth: false
     });
   }
@@ -198,7 +197,6 @@ app.get('/register', (req, res) => {
       });
     }else{
       res.render('pages/register', {
-        message: "Create an account",
         auth: false
       });
     }
