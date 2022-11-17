@@ -19,14 +19,14 @@
                                         <% if (ingredients) {
                                             ingredients.forEach((ingredient) => {
                                         %>
-                                        <li class=""><%= ingredient.quantity + ' ' + ingredient.unit_name + (ingredient.quantity > 1 && ingredient.unit_name != '' ? 's' : '') + ' ' + ingredient.ingredient_name + ' ' + ingredient.price %></li>
+                                        <li class=""><%= ingredient.quantity + ' ' + ingredient.unit_name + (ingredient.quantity > 1 && ingredient.unit_name != '' ? 's' : '') + ' ' + ingredient.ingredient_name + ' ' + ingredient.price + ' ' + ingredient.size %></li>
                                         <% });
                                         } %>
                                     </ul>
                                 </div>
                             </div>
                             <div class="relative flex w-1/3 h-full bg-opacity-20 bg-emerald-500 bg- rounded-r-lg">
-                                <h1 class="m-5 text-xl font-semibold overflow-hidden">Cooking Time</h1>
+                                <h1 class="m-5 text-xl font-semibold overflow-hidden"></h1>
                             </div>
                         </div>
                     </div>

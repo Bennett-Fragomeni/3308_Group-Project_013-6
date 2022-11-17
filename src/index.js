@@ -46,10 +46,11 @@ async function getPriceByIngredientName(ingredientName) {
   console.log('got access token succesfully')
     
   var lowestPrice = 0;
+  var size;
   var results = response.data.data;
 
   if (results == [])
-    return 'No price found';
+    return {price: 'No price found', size: ''};
 
   results.forEach(async (ingredient) => {
     console.log(ingredient)
@@ -59,17 +60,19 @@ async function getPriceByIngredientName(ingredientName) {
           
       var newPrice = item.price.promo == 0 ? item.price.regular : item.price.promo;
   
-      if (newPrice < lowestPrice || lowestPrice == 0)
+      if (newPrice < lowestPrice || lowestPrice == 0) {
         lowestPrice = newPrice
+        size = item.size
+      }
     })
   });
 
   if (lowestPrice == 0)
-    return 'No price found';
+    return {price: 'No price found', size: ''};
 
   console.log(lowestPrice);
 
-  return lowestPrice;
+  return {price: lowestPrice, size: size};
 }
 
 db.connect()
@@ -329,7 +332,9 @@ app.get('/view_recipe', async (req, res) => {
     .then(async (data2) => { 
       console.log(data2);
       for (const ingredientEntry of data2) {
-        ingredientEntry.price = await getPriceByIngredientName(ingredientEntry.ingredient_name);
+        var priceSize = await getPriceByIngredientName(ingredientEntry.ingredient_name);
+        ingredientEntry.price = priceSize.price;
+        ingredientEntry.size = priceSize.size;
       }
       console.log(data2);
       if (!data2)
