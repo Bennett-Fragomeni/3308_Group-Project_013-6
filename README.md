@@ -46,4 +46,12 @@ On csci3308.int.colorado.edu
 
 6. How to run tests
 
+Unit testing
+
+Integration testing
+
+User acceptance testing
+- Through a diverse grouping of CU Boulder students with no prior knowledge of FrugalFind
+- Users will test and use the product, pointing out features which are limited or features that they wish were implemented
+
 7. Link to application
