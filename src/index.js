@@ -504,7 +504,7 @@ app.get('/cart', (req, res) => {
       console.log('Failed to get cart');
     });
   } else {
-    res.render('pages/login', {
+    res.redirect('pages/login', {
       message: "Please Login Before Continuing",
       auth: false
     });
@@ -512,7 +512,7 @@ app.get('/cart', (req, res) => {
 });
 
 // POST recipe_id to cart table with the respective user_id
-app.post('/cart', (req, res) => {
+app.post('/cart/add', (req, res) => {
   console.log('POST: cart');
   if(auth(req)){
     const query = 'INSERT INTO cart (user_id, recipe_id) VALUES ($1, $2);';
@@ -528,7 +528,7 @@ app.post('/cart', (req, res) => {
       console.log('Failed to add to cart');
     });
   } else {
-    res.render('pages/login', {
+    res.redirect('pages/login', {
       message: "Please Login Before Continuing",
       auth: false
     });
@@ -536,7 +536,7 @@ app.post('/cart', (req, res) => {
 });
 
 // REMOVE selected entry from cart table
-app.delete('/remove_from_cart', (req, res) => {
+app.post('/cart/delete', (req, res) => {
   console.log('DELETE: remove_from_cart');
   if(auth(req)){
     const query = 'DELETE FROM cart WHERE user_id = $1 AND recipe_id = $2;';
@@ -552,7 +552,7 @@ app.delete('/remove_from_cart', (req, res) => {
       console.log('Failed to remove from cart');
     });
   } else {
-    res.render('pages/login', {
+    res.redirect('pages/login', {
       message: "Please Login Before Continuing",
       auth: false
     });
