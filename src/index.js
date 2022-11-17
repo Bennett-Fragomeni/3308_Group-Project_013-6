@@ -17,7 +17,7 @@ const dbConfig = {
 const db = pgp(dbConfig);
 
 async function getPriceByIngredientName(ingredientName) {
-  axios({
+  const output = await axios({
     "async": true,
     "crossDomain": true,
     "url": "https://api-ce.kroger.com/v1/connect/oauth2/token",
@@ -30,59 +30,46 @@ async function getPriceByIngredientName(ingredientName) {
       "grant_type": "client_credentials",
       "scope": "product.compact"
     }
-  })
-  .then((output) => {
-    console.log('got access token succesfully')
-    axios({
-      "async": true,
-      "crossDomain": true,
-      "url": `https://api-ce.kroger.com/v1/products?filter.term=${ingredientName}&filter.locationId=62000061`, //&filter.locationId={{LOCATION_ID}}
-      "method": "GET",
-      "headers": {
-        "Accept": "application/json",
-        "Authorization": `Bearer ${output.data.access_token}`
-      }
-    })
-    .then((results) => {
-      var lowestPrice = 0
-      results = results.data.data;
+  });
 
-      if (results == [])
-        return 'No price found';
+  const response = await axios({
+    "async": true,
+    "crossDomain": true,
+    "url": `https://api-ce.kroger.com/v1/products?filter.term=${ingredientName}&filter.locationId=62000061`, //&filter.locationId={{LOCATION_ID}}
+    "method": "GET",
+    "headers": {
+      "Accept": "application/json",
+      "Authorization": `Bearer ${output.data.access_token}`
+    }
+  });
 
-      results.forEach((ingredient) => {
-        console.log(ingredient)
-        ingredient.items.forEach((item) => {
-          if (!('price' in item))
-            return;
+  console.log('got access token succesfully')
+    
+  var lowestPrice = 0;
+  var results = response.data.data;
+
+  if (results == [])
+    return 'No price found';
+
+  results.forEach(async (ingredient) => {
+    console.log(ingredient)
+    ingredient.items.forEach(async (item) => {
+      if (!('price' in item))
+        return;
           
-          var newPrice = item.price.promo == 0 ? item.price.regular : item.price.promo;
+      var newPrice = item.price.promo == 0 ? item.price.regular : item.price.promo;
   
-          if (newPrice < lowestPrice || lowestPrice == 0)
-            lowestPrice = newPrice
-        })
-      });
-
-      if (lowestPrice == 0)
-        return 'No price found';
-
-      console.log(lowestPrice)
-
-      return lowestPrice
+      if (newPrice < lowestPrice || lowestPrice == 0)
+        lowestPrice = newPrice
     })
-    .catch(error => {
-    // Handle errors
-        console.log('Failed to discover');
-        console.log(error);
-    })
-  })
-  .catch(error => {
-    // Handle errors
-      console.log('Failed to get access token');
-      console.log(error);
-  })
+  });
 
-  return "Price not found";
+  if (lowestPrice == 0)
+    return 'No price found';
+
+  console.log(lowestPrice);
+
+  return lowestPrice;
 }
 
 db.connect()
@@ -319,7 +306,7 @@ app.post('/recipes', (req,res) => {
     });
 });
 
-app.get('/view_recipe', (req, res) => {
+app.get('/view_recipe', async (req, res) => {
   console.log('GET: view_recipe');
   console.log(req.query.recipe_id);
   var recipeID = req.query.recipe_id;
@@ -330,7 +317,7 @@ app.get('/view_recipe', (req, res) => {
   db.any(query1, [
     recipeID
   ])
-  .then((data1) => {
+  .then(async (data1) => {
     console.log(data1);
     if (!data1) {
       console.log("No recipe found")
@@ -339,11 +326,11 @@ app.get('/view_recipe', (req, res) => {
     db.any(query2, [
       recipeID
     ])
-    .then((data2) => { 
+    .then(async (data2) => { 
       console.log(data2);
-      data2.forEach((ingredientEntry) => {
-        ingredientEntry.price = getPriceByIngredientName(ingredientEntry.ingredient_name);
-      })
+      for (const ingredientEntry of data2) {
+        ingredientEntry.price = await getPriceByIngredientName(ingredientEntry.ingredient_name);
+      }
       console.log(data2);
       if (!data2)
         return console.log("No ingredients found")
