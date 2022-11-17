@@ -53,7 +53,6 @@ async function getPriceByIngredientName(ingredientName) {
     return {price: 'No price found', size: ''};
 
   results.forEach(async (ingredient) => {
-    console.log(ingredient)
     ingredient.items.forEach(async (item) => {
       if (!('price' in item))
         return;
@@ -330,19 +329,30 @@ app.get('/view_recipe', async (req, res) => {
     db.any(query2, [
       recipeID
     ])
-    .then(async (data2) => { 
-      console.log(data2);
-      for (const ingredientEntry of data2) {
-        var priceSize = await getPriceByIngredientName(ingredientEntry.ingredient_name);
-        ingredientEntry.price = priceSize.price;
-        ingredientEntry.size = priceSize.size;
+    .then(async (ingredients) => { 
+      console.log(ingredients);
+      var promises = []
+
+      async function getPrice(ingredient) {
+        var priceSize = await getPriceByIngredientName(ingredient.ingredient_name);
+        ingredient.price = priceSize.price;
+        ingredient.size = priceSize.size;
+        return ingredient
       }
-      console.log(data2);
-      if (!data2)
+      
+      for (const ingredient of ingredients) {
+        promises.push(getPrice(ingredient))
+      }
+
+      const responses = await Promise.all(promises);
+
+      console.log(ingredients);
+
+      if (!ingredients)
         return console.log("No ingredients found")
       res.render('pages/view_recipe', {
         recipe: data1[0],
-        ingredients: data2,
+        ingredients: ingredients,
         auth: true
       })
     })
