@@ -475,6 +475,37 @@ app.post('/home', (req, res) => {
   }
 });
 
+// Get Recipes based on Cart Info based on user_id
+app.get('/cart', (req, res) => {
+  console.log('GET: cart');
+  if(auth(req)){
+    const query = 'SELECT * FROM recipes, cart WHERE cart.user_id = $1 AND cart.recipe_id = recipes.recipe_id;';
+    db.any (query, [
+      req.user_id
+    ])
+    .then(function (data) {
+      res.render('pages/cart', {
+        recipes: data,
+        auth: true
+      });
+    })
+    .catch(function (err) {
+      res.render('pages/cart', {
+        message: "Failed to get recipes",
+        auth: true
+      });
+      console.log('Failed to get recipes');
+    });
+  }
+  else{
+    res.render('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
+});
+
+
 // LOGOUT API
 app.get('/logout', (req, res) => {
   console.log('GET: /logout'); 
