@@ -21,8 +21,8 @@
   <!-- RIGHT MENU ITEMS -->
     <div class="flex flex-row items-center relative gap-2 pr-5">
       <div class="dropdown relative flex-row">
-        <% if(auth) { %>
-          <%- include ('./cart') %>
+        <%- include ('./cart') %>
+          <% if(auth) { %>
           <a
           class="dropdown-toggle flex items-center hidden-arrow text-black hover:text-gray-700 focus:text-gray-700"
           href="/logout"
