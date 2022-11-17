@@ -39,7 +39,10 @@
                 <%= recipe.recipe_desc %>
             </p>
         </div> 
-        <button type='submit' class="flex-row justify-center items-center w-30 flex content-end bg-blue-500 hover:bg-blue-400 px-3 py-2 rounded-lg text-white">Add to Cart</button>
+        <form action="/recipes/cart" method="POST">
+            <input type="hidden" name="recipe_id" value= " <%= recipe.recipe_id %> " />
+            <button type='submit' class="flex-row justify-center items-center w-30 flex content-end bg-blue-500 hover:bg-blue-400 px-3 py-2 rounded-lg text-white">Add to Cart</button>
+        </form>
         <% } %>
     </div>
 </main>

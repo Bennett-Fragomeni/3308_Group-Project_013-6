@@ -53,4 +53,5 @@ INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id, quantity, unit_id) 
 
 INSERT INTO cart (user_id, recipe_id) VALUES
 (1, 1),
-(1, 2);
+(1, 2),
+(6, 3);

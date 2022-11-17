@@ -52,7 +52,7 @@ async function getPriceByIngredientName(ingredientName) {
     return 'No price found';
 
   results.forEach(async (ingredient) => {
-    console.log(ingredient)
+    //console.log(ingredient)
     ingredient.items.forEach(async (item) => {
       if (!('price' in item))
         return;
@@ -266,11 +266,20 @@ app.get('/recipes', (req, res) => {
     const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
     db.any(query)
     .then(recipes => {
-      //console.log(recipes);
-      res.render('pages/recipes', {
-        recipes: recipes,
-        auth: true
-      }); 
+      //Sending the Cart data back to the recipes page
+      const query2 = `SELECT recipe_name FROM users  
+      INNER JOIN cart ON cart.user_id = users.user_id 
+      INNER JOIN recipes ON recipes.recipe_id = cart.recipe_id 
+      WHERE users.user_id = $1;`;
+      console.log("CART U_ID: ", user.user_id);
+      db.any(query2, [user.user_id])
+      .then(cart => {
+        res.render('pages/recipes', {
+          recipes: recipes,
+          cart: cart,
+          auth: true
+        })
+      })
     })
     .catch(function (err) {
       res.redirect('/home',
@@ -284,10 +293,7 @@ app.get('/recipes', (req, res) => {
       auth: false
     });
   }
-  
-
 });
-
 
 // POST Recepies
 app.post('/recipes', (req,res) => {
@@ -309,29 +315,22 @@ app.post('/recipes', (req,res) => {
     });
 });
 
-//GET Recepies/cart
-app.get('/recipes/cart', (req,res) => {
-  console.log('GET: /recipes/cart');
-  console.log('U_ID: ', user.user_id);
-  console.log('R: ', recipe);
-  console.log('R_ID: ', recipe.recipe_id);
-  var query = "INSERT INRO cart (user_id, recipe_id) VALUES ($1, $2);";
+// POST Recepies/cart
+app.post('/recipes/cart', (req,res) => {
+  console.log('POST: /recipes/cart');
+  const query = "INSERT INTO cart (user_id, recipe_id) VALUES ($1, $2);";
   db.any(query, [
     user.user_id, 
-    recipe.recipe_id
+    req.body.recipe_id
   ])
   .then(data => {
-    res.render('pages/recipes', {
-      recipes: recipes,
-      auth: true,
-      cart: true
-    })
+    res.redirect('/recipes')
   })
   .catch(function (err) {
-    console.log('Failed to GET: /recipes/cart')
+    console.log('Failed to POST: /recipes/cart');
+    console.log(err);
   });
 });
-
 
 // GET View Recepie
 app.get('/view_recipe', async (req, res) => {
@@ -346,7 +345,7 @@ app.get('/view_recipe', async (req, res) => {
     recipeID
   ])
   .then(async (data1) => {
-    console.log(data1);
+    //console.log(data1);
     if (!data1) {
       console.log("No recipe found")
       return res.redirect('/recipes');
@@ -502,6 +501,23 @@ app.post('/home', (req, res) => {
         console.log('Failed to get Ingredients');
       });
   }
+});
+
+// GET ViewList
+app.get('/list', (req,res) => {
+  console.log("GET: ViewList");
+  const query2 = `SELECT recipe_name FROM users  
+      INNER JOIN cart ON cart.user_id = users.user_id 
+      INNER JOIN recipes ON recipes.recipe_id = cart.recipe_id 
+      WHERE users.user_id = $1;`;
+      console.log("CART U_ID: ", user.user_id);
+      db.any(query2, [user.user_id])
+      .then(cart => {
+        res.render('pages/ViewList', {
+          cart: cart,
+          auth: true
+        })
+      })
 });
 
 // LOGOUT 
