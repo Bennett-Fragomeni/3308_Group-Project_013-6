@@ -511,7 +511,54 @@ app.get('/cart', (req, res) => {
   }
 });
 
-    
+// POST recipe_id to cart table with the respective user_id
+app.post('/cart', (req, res) => {
+  console.log('POST: cart');
+  if(auth(req)){
+    const query = 'INSERT INTO cart (user_id, recipe_id) VALUES ($1, $2);';
+    db.any (query, [
+      req.session.user.user_id,
+      req.body.recipe_id
+    ])
+    .then(function (data) {
+      console.log('Added to cart');
+      res.redirect('/recipes');
+    })
+    .catch(function (err) {
+      console.log('Failed to add to cart');
+    });
+  } else {
+    res.render('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
+});
+
+// REMOVE selected entry from cart table
+app.delete('/remove_from_cart', (req, res) => {
+  console.log('DELETE: remove_from_cart');
+  if(auth(req)){
+    const query = 'DELETE FROM cart WHERE user_id = $1 AND recipe_id = $2;';
+    db.any (query, [
+      req.session.user.user_id,
+      req.body.recipe_id
+    ])
+    .then(function (data) {
+      console.log('Removed from cart');
+      res.redirect('/cart');
+    })
+    .catch(function (err) {
+      console.log('Failed to remove from cart');
+    });
+  } else {
+    res.render('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
+});
+
 
 // LOGOUT API
 app.get('/logout', (req, res) => {
