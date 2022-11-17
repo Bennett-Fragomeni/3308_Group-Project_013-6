@@ -483,7 +483,7 @@ app.post('/home', (req, res) => {
   }
 });
 
-// LOGOUT 
+// LOGOUT API
 app.get('/logout', (req, res) => {
   console.log('GET: /logout'); 
   req.session.destroy();
