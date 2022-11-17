@@ -16,10 +16,12 @@
                                 <h1 class="text-2xl font-semibold">Ingredients</h1>
                                 <div class="mx-5 my-3 relative flex">
                                     <ul class="list-disc">
+                                        <% let total_price = 0 %>
                                         <% if (ingredients) {
                                             ingredients.forEach((ingredient) => {
                                         %>
-                                        <li class=""><%= ingredient.quantity + ' ' + ingredient.unit_name + (ingredient.quantity > 1 && ingredient.unit_name != '' ? 's' : '') + ' ' + ingredient.ingredient_name + ' ' + ingredient.price + ' ' + ingredient.size %></li>
+                                        <% total_price += ingredient.price%>
+                                        <li class=""><%= ingredient.quantity + ' ' + ingredient.unit_name + (ingredient.quantity > 1 && ingredient.unit_name != '' ? 's' : '') + ' ' + ingredient.ingredient_name + ' $' + ingredient.price + ' ' + ingredient.size %></li>
                                         <% });
                                         } %>
                                     </ul>
@@ -38,7 +40,7 @@
             <p class="text-center"> 
                 <%= recipe.recipe_desc %>
             </p>
-            <h1 class="text-xl text-center font-semibold">Total Price: <a class="font-normal text-large"> <%= recipe.total_price %> </a> </h1>
+            <h1 class="text-xl text-center font-semibold">Total Price: <a class="font-normal text-large"> $ <%= total_price %> </a> </h1>
         </div> 
         <form action="/cart/add" method="POST">    
             <button type='submit' name="recipe_id" value="<%= recipe.recipe_id %>" class=" flex-row justify-center items-center w-40 bg-blue-500 hover:bg-blue-400 px-3 py-2 rounded-lg text-white">Add to Cart</button>
