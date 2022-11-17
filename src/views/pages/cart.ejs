@@ -6,7 +6,7 @@
                 <h1 class="text-5xl text-center font-semibold">My Cart</h1>
             </div>
 
-            <% if (recipes) { %>
+            <% if (recipes.length != 0) { %>
             <div class="relative flex mt-5 flex-col">
                 <table class="relative flex pt-10 justify-center">
                     <% recipes.forEach((recipe) => { 
@@ -38,6 +38,11 @@
                     </div>
                     <% }) %>
                 </table>
+            </div>
+            <% } else { %>
+            <div class="relative flex flex-col justify-center items-center h-[85vh]">
+                <p class="relative flex text-2xl font-bold">Your cart is empty</p>
+                <a href="/recipes" class="underline text-blue-600 hover:text-blue-400"> Click here to add recipes </a>
             </div>
             <% } %>
         </div>
