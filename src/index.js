@@ -16,7 +16,7 @@ const dbConfig = {
 
 const db = pgp(dbConfig);
 
-function getPriceByIngredientName(ingredientName) {
+async function getPriceByIngredientName(ingredientName) {
   axios({
     "async": true,
     "crossDomain": true,
@@ -36,7 +36,7 @@ function getPriceByIngredientName(ingredientName) {
     axios({
       "async": true,
       "crossDomain": true,
-      "url": `https://api-ce.kroger.com/v1/products?filter.term=${ingredientName}`, //&filter.locationId={{LOCATION_ID}}
+      "url": `https://api-ce.kroger.com/v1/products?filter.term=${ingredientName}&filter.locationId=62000061`, //&filter.locationId={{LOCATION_ID}}
       "method": "GET",
       "headers": {
         "Accept": "application/json",
@@ -51,14 +51,15 @@ function getPriceByIngredientName(ingredientName) {
         return 'No price found';
 
       results.forEach((ingredient) => {
+        console.log(ingredient)
         ingredient.items.forEach((item) => {
           if (!('price' in item))
             return;
-
-          console.log(item.price)
+          
+          var newPrice = item.price.promo == 0 ? item.price.regular : item.price.promo;
   
-          if (item.price < lowestPrice || lowestPrice == 0)
-            lowestPrice = item.price
+          if (newPrice < lowestPrice || lowestPrice == 0)
+            lowestPrice = newPrice
         })
       });
 
@@ -340,10 +341,10 @@ app.get('/view_recipe', (req, res) => {
     ])
     .then((data2) => { 
       console.log(data2);
-      data2.forEach(async (ingredientEntry) => {
-        ingredientEntry.price = await getPriceByIngredientName(ingredientEntry.ingredient_name);
-        console.log(ingredientEntry);
+      data2.forEach((ingredientEntry) => {
+        ingredientEntry.price = getPriceByIngredientName(ingredientEntry.ingredient_name);
       })
+      console.log(data2);
       if (!data2)
         return console.log("No ingredients found")
       res.render('pages/view_recipe', {

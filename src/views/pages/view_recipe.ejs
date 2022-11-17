@@ -19,7 +19,7 @@
                                         <% if (ingredients) {
                                             ingredients.forEach((ingredient) => {
                                         %>
-                                        <li class=""><%= ingredient.quantity + ' ' + ingredient.unit_name + (ingredient.quantity > 1 && ingredient.unit_name != '' ? 's' : '') + ' ' + ingredient.ingredient_name %></li>
+                                        <li class=""><%= ingredient.quantity + ' ' + ingredient.unit_name + (ingredient.quantity > 1 && ingredient.unit_name != '' ? 's' : '') + ' ' + ingredient.ingredient_name + ' ' + ingredient.price %></li>
                                         <% });
                                         } %>
                                     </ul>
