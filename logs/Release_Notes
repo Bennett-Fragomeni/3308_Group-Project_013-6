@@ -8,10 +8,12 @@ Features:
 - Navbar for navigating between pages
 - Flexible UI design that scales to screen size
 - Functionality for creating custom user recipes
+- Added cart functionality: ADD, VIEW, DELETE
 
 Bug Fixes and Details:
 
 - Fixes on login and register.ejs to make auth work properly with database
+- Added password match checking in register page and messages
 - Added test data to database recipes, units, recipe_to_ingredients, and ingredients table
 - Fixed flexing for frontend pages
 - Added view_recipe and added changes to make it query based over form based
