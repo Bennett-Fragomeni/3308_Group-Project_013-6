@@ -23,6 +23,7 @@ Make a branch every time that you want to add / change something
 Everyone should make equal contributions to the Main Branch
 
 Meeting 2: 11/7/2022
+Scribe: Nathan Keyt
 
 Project board not complete, have to update based, acceptance criteria for user storyies
 
@@ -45,6 +46,7 @@ Plan for next week:
 Check in at end of recitation
 
 Meeting 3: 11/14/20222
+Scribe: Aieshah Safi
 
 -All of us much show commits by reciation on Thursday
 
