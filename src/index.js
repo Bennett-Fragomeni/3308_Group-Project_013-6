@@ -90,7 +90,8 @@ app.use(bodyParser.json());
 const user = {
   user_id: null,
   username: null,
-  email: null
+  email: null,
+  user_id: null
 };
 
 app.use(
@@ -167,6 +168,7 @@ app.post('/login', (req, res) => {
             user.user_id = data[0].user_id;
             user.username = data[0].username;
             user.email = data[0].email;
+            user.user_id = data[0].user_id;
             
             req.session.user = user;
             req.session.save();
@@ -257,19 +259,29 @@ app.get('/home', (req, res) => {
   }
 });
 
-// Get /recipes
+// GET /recipes
 app.get('/recipes', (req, res) => {
 
   console.log('GET: /recipes');
+
   if(auth(req)){
     const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
     db.any(query)
     .then(recipes => {
-      console.log(recipes);
-      res.render('pages/recipes', {
-        recipes: recipes,
-        auth: true
-      }); 
+      //Sending the Cart data back to the recipes page
+      const query2 = `SELECT recipe_name FROM users  
+      INNER JOIN cart ON cart.user_id = users.user_id 
+      INNER JOIN recipes ON recipes.recipe_id = cart.recipe_id 
+      WHERE users.user_id = $1;`;
+      console.log("CART U_ID: ", user.user_id);
+      db.any(query2, [user.user_id])
+      .then(cart => {
+        res.render('pages/recipes', {
+          recipes: recipes,
+          cart: cart,
+          auth: true
+        })
+      })
     })
     .catch(function (err) {
       res.redirect('/home',
@@ -283,15 +295,12 @@ app.get('/recipes', (req, res) => {
       auth: false
     });
   }
-  
-
 });
-
 
 // POST Recepies
 app.post('/recipes', (req,res) => {
     console.log(req.body.search);
-    const query = 'SELECT * FROM recipes WHERE position(LOWER($1) in LOWER(recipe_name)) > 0 ORDER BY recipes.recipe_id DESC';
+    const query = 'SELECT * FROM recipes WHERE position(LOWER($1) in LOWER(recipe_name)) > 0 ORDER BY recipes.recipe_id DESC;';
     db.any(query, [
         req.body.search
     ])
@@ -308,6 +317,23 @@ app.post('/recipes', (req,res) => {
     });
 });
 
+// POST Recepies/cart
+app.post('/recipes/cart', (req,res) => {
+  console.log('POST: /recipes/cart');
+  const query = "INSERT INTO cart (user_id, recipe_id) VALUES ($1, $2);";
+  db.any(query, [
+    user.user_id, 
+    req.body.recipe_id
+  ])
+  .then(data => {
+    res.redirect('/recipes')
+  })
+  .catch(function (err) {
+    console.log('Failed to POST: /recipes/cart');
+    console.log(err);
+  });
+});
+
 // GET View Recepie
 app.get('/view_recipe', async (req, res) => {
   console.log('GET: view_recipe');
@@ -321,7 +347,7 @@ app.get('/view_recipe', async (req, res) => {
     recipeID
   ])
   .then(async (data1) => {
-    console.log(data1);
+    //console.log(data1);
     if (!data1) {
       console.log("No recipe found")
       return res.redirect('/recipes');
@@ -329,6 +355,7 @@ app.get('/view_recipe', async (req, res) => {
     db.any(query2, [
       recipeID
     ])
+
     .then(async (ingredients) => { 
       console.log(ingredients);
       var promises = []
@@ -349,6 +376,7 @@ app.get('/view_recipe', async (req, res) => {
       console.log(ingredients);
 
       if (!ingredients)
+
         return console.log("No ingredients found")
       res.render('pages/view_recipe', {
         recipe: data1[0],

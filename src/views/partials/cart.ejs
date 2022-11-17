@@ -11,6 +11,39 @@
                 </g>
             </g>    
         </svg>
-    </a>
+
+        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+
+    </button>
+
+    <!-- Dropdown menu -->
+    <div class="hidden bg-white text-base z-50 list-none divide-y divide-gray-100 rounded shadow my-4" id="dropdown">
+        <div class="px-4 py-3">
+            <span class="block text-sm">Shopping Cart</span>
+        </div>
+        <% if(typeof(cart) !== "undefined") { %>
+            <%  
+                console.log("cart: ", cart);
+                cart.forEach((item) => {
+            %>
+                <ul class="py-1" aria-labelledby="dropdown">
+                    <li>
+                        <a class="text-sm hover:bg-gray-100 text-gray-700 block px-4 py-2">
+                            <%= item.recipe_name %>
+                        </a>
+                    </li>
+                </ul>
+                <% }); %>
+                <a class="text-center w-20 bg-blue-500 hover:bg-blue-400 px-3 py-2 rounded-sm text-white" href="/list">Get List</a>
+        <% } else { %>
+            <ul class="py-1" aria-labelledby="dropdown">
+                <li>
+                    <a href="#" class="text-sm hover:bg-gray-100 text-gray-700 block px-4 py-2">
+                        Cart Empty
+                    </a>
+                </li>
+            </ul>
+        <% } %>
+    </div>
 </div>
 
