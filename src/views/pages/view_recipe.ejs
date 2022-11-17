@@ -34,11 +34,15 @@
             </div>  
         </div>
         <div class="relative flex flex-col w-5/6 justify-start">
-            <h1 class="text-3xl font-semibold">Description</h1>
+            <h1 class="text-2xl font-semibold">Description</h1>
             <p class=""> 
                 <%= recipe.recipe_desc %>
             </p>
-        </div>
+        </div> 
+        <button class="bg-green-500 hover:bg-green-700 text-black font-semibold py-3 px-5 rounded">
+            Add to Cart
+          </button>
+
         <% } %>
     </div>
 </main>
