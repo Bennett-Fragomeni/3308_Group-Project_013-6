@@ -89,6 +89,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 
 const user = {
+  user_id: null,
   username: null,
   email: null
 };
@@ -165,6 +166,7 @@ app.post('/login', (req, res) => {
         }
         else {
             console.log('User found and passwords match')
+            user.user_id = data[0].user_id;
             user.username = data[0].username;
             user.email = data[0].email;
             
@@ -482,6 +484,34 @@ app.post('/home', (req, res) => {
       });
   }
 });
+
+// GET recipe info based on entries on cart table that match the user's id
+app.get('/cart', (req, res) => {
+  console.log('GET: cart');
+  if(auth(req)){
+    const query = 'SELECT recipes.* FROM recipes,cart WHERE cart.user_id = $1 AND cart.recipe_id = recipes.recipe_id;';
+    db.any (query, [
+      req.session.user.user_id
+    ])
+    .then(function (data) {
+      console.log(data);
+      res.render('pages/cart', {
+        recipes: data,
+        auth: true
+      });
+    })
+    .catch(function (err) {
+      console.log('Failed to get cart');
+    });
+  } else {
+    res.render('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
+});
+
+    
 
 // LOGOUT API
 app.get('/logout', (req, res) => {
