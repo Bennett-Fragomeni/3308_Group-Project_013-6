@@ -24,7 +24,9 @@
                                                 <p class="w-full h-full break-words text-left text-ellipsis overflow-hidden relative flex text-sm"><%= recipe.recipe_desc %></p>
                                             </div>
                                             <div class="h-1/5 relative flex w-full justify-start items-center">
-                                                <button type='submit' class=" flex-row justify-center items-center w-40 bg-red-500 hover:bg-red-400 px-3 py-2 rounded-lg text-white">Remove from Cart</button>
+                                                <form action="/cart/delete" method="POST">
+                                                    <button type='submit' name="recipe_id" value="<%= recipe.recipe_id %>" class=" flex-row justify-center items-center w-40 bg-red-500 hover:bg-red-400 px-3 py-2 rounded-lg text-white">Remove from Cart</button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
