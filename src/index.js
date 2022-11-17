@@ -87,7 +87,8 @@ app.use(bodyParser.json());
 
 const user = {
   username: null,
-  email: null
+  email: null,
+  user_id: null
 };
 
 app.use(
@@ -164,6 +165,7 @@ app.post('/login', (req, res) => {
             console.log('User found and passwords match')
             user.username = data[0].username;
             user.email = data[0].email;
+            user.user_id = data[0].user_id;
             
             req.session.user = user;
             req.session.save();
@@ -255,15 +257,16 @@ app.get('/home', (req, res) => {
   }
 });
 
-// Get /recipes
+// GET /recipes
 app.get('/recipes', (req, res) => {
 
   console.log('GET: /recipes');
+
   if(auth(req)){
     const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
     db.any(query)
     .then(recipes => {
-      console.log(recipes);
+      //console.log(recipes);
       res.render('pages/recipes', {
         recipes: recipes,
         auth: true
@@ -289,7 +292,7 @@ app.get('/recipes', (req, res) => {
 // POST Recepies
 app.post('/recipes', (req,res) => {
     console.log(req.body.search);
-    const query = 'SELECT * FROM recipes WHERE position(LOWER($1) in LOWER(recipe_name)) > 0 ORDER BY recipes.recipe_id DESC';
+    const query = 'SELECT * FROM recipes WHERE position(LOWER($1) in LOWER(recipe_name)) > 0 ORDER BY recipes.recipe_id DESC;';
     db.any(query, [
         req.body.search
     ])
@@ -305,6 +308,30 @@ app.post('/recipes', (req,res) => {
         console.log('Failed to POST: /recipes')
     });
 });
+
+//GET Recepies/cart
+app.get('/recipes/cart', (req,res) => {
+  console.log('GET: /recipes/cart');
+  console.log('U_ID: ', user.user_id);
+  console.log('R: ', recipe);
+  console.log('R_ID: ', recipe.recipe_id);
+  var query = "INSERT INRO cart (user_id, recipe_id) VALUES ($1, $2);";
+  db.any(query, [
+    user.user_id, 
+    recipe.recipe_id
+  ])
+  .then(data => {
+    res.render('pages/recipes', {
+      recipes: recipes,
+      auth: true,
+      cart: true
+    })
+  })
+  .catch(function (err) {
+    console.log('Failed to GET: /recipes/cart')
+  });
+});
+
 
 // GET View Recepie
 app.get('/view_recipe', async (req, res) => {
@@ -328,11 +355,10 @@ app.get('/view_recipe', async (req, res) => {
       recipeID
     ])
     .then(async (data2) => { 
-      console.log(data2);
+      //console.log(data2);
       for (const ingredientEntry of data2) {
         ingredientEntry.price = await getPriceByIngredientName(ingredientEntry.ingredient_name);
       }
-      console.log(data2);
       if (!data2)
         return console.log("No ingredients found")
       res.render('pages/view_recipe', {
