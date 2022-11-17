@@ -46,30 +46,32 @@ async function getPriceByIngredientName(ingredientName) {
   console.log('got access token succesfully')
     
   var lowestPrice = 0;
+  var size;
   var results = response.data.data;
 
   if (results == [])
-    return 'No price found';
+    return {price: 'No price found', size: ''};
 
   results.forEach(async (ingredient) => {
-    //console.log(ingredient)
     ingredient.items.forEach(async (item) => {
       if (!('price' in item))
         return;
           
       var newPrice = item.price.promo == 0 ? item.price.regular : item.price.promo;
   
-      if (newPrice < lowestPrice || lowestPrice == 0)
+      if (newPrice < lowestPrice || lowestPrice == 0) {
         lowestPrice = newPrice
+        size = item.size
+      }
     })
   });
 
   if (lowestPrice == 0)
-    return 'No price found';
+    return {price: 'No price found', size: ''};
 
   console.log(lowestPrice);
 
-  return lowestPrice;
+  return {price: lowestPrice, size: size};
 }
 
 db.connect()
@@ -86,6 +88,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 
 const user = {
+  user_id: null,
   username: null,
   email: null,
   user_id: null
@@ -129,7 +132,6 @@ app.get('/', (req, res) =>{
   }
   else{
     res.render('pages/login', {
-      message: "Please Login Before Continuing",
       auth: false
     });
   }
@@ -163,6 +165,7 @@ app.post('/login', (req, res) => {
         }
         else {
             console.log('User found and passwords match')
+            user.user_id = data[0].user_id;
             user.username = data[0].username;
             user.email = data[0].email;
             user.user_id = data[0].user_id;
@@ -195,7 +198,6 @@ app.get('/register', (req, res) => {
       });
     }else{
       res.render('pages/register', {
-        message: "Create an account",
         auth: false
       });
     }
@@ -353,16 +355,32 @@ app.get('/view_recipe', async (req, res) => {
     db.any(query2, [
       recipeID
     ])
-    .then(async (data2) => { 
-      //console.log(data2);
-      for (const ingredientEntry of data2) {
-        ingredientEntry.price = await getPriceByIngredientName(ingredientEntry.ingredient_name);
+
+    .then(async (ingredients) => { 
+      console.log(ingredients);
+      var promises = []
+
+      async function getPrice(ingredient) {
+        var priceSize = await getPriceByIngredientName(ingredient.ingredient_name);
+        ingredient.price = priceSize.price;
+        ingredient.size = priceSize.size;
+        return ingredient
       }
-      if (!data2)
+      
+      for (const ingredient of ingredients) {
+        promises.push(getPrice(ingredient))
+      }
+
+      const responses = await Promise.all(promises);
+
+      console.log(ingredients);
+
+      if (!ingredients)
+
         return console.log("No ingredients found")
       res.render('pages/view_recipe', {
         recipe: data1[0],
-        ingredients: data2,
+        ingredients: ingredients,
         auth: true
       })
     })
@@ -503,24 +521,82 @@ app.post('/home', (req, res) => {
   }
 });
 
-// GET ViewList
-app.get('/list', (req,res) => {
-  console.log("GET: ViewList");
-  const query2 = `SELECT recipe_name FROM users  
-      INNER JOIN cart ON cart.user_id = users.user_id 
-      INNER JOIN recipes ON recipes.recipe_id = cart.recipe_id 
-      WHERE users.user_id = $1;`;
-      console.log("CART U_ID: ", user.user_id);
-      db.any(query2, [user.user_id])
-      .then(cart => {
-        res.render('pages/ViewList', {
-          cart: cart,
-          auth: true
-        })
-      })
+// GET recipe info based on entries on cart table that match the user's id
+app.get('/cart', (req, res) => {
+  console.log('GET: cart');
+  if(auth(req)){
+    const query = 'SELECT recipes.* FROM recipes,cart WHERE cart.user_id = $1 AND cart.recipe_id = recipes.recipe_id;';
+    db.any (query, [
+      req.session.user.user_id
+    ])
+    .then(function (data) {
+      console.log(data);
+      res.render('pages/cart', {
+        recipes: data,
+        auth: true
+      });
+    })
+    .catch(function (err) {
+      console.log('Failed to get cart');
+    });
+  } else {
+    res.redirect('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
 });
 
-// LOGOUT 
+// POST recipe_id to cart table with the respective user_id
+app.post('/cart/add', (req, res) => {
+  console.log('POST: cart');
+  if(auth(req)){
+    const query = 'INSERT INTO cart (user_id, recipe_id) VALUES ($1, $2);';
+    db.any (query, [
+      req.session.user.user_id,
+      req.body.recipe_id
+    ])
+    .then(function (data) {
+      console.log('Added to cart');
+      res.redirect('/recipes');
+    })
+    .catch(function (err) {
+      console.log('Failed to add to cart');
+    });
+  } else {
+    res.redirect('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
+});
+
+// REMOVE selected entry from cart table
+app.post('/cart/delete', (req, res) => {
+  console.log('DELETE: remove_from_cart');
+  if(auth(req)){
+    const query = 'DELETE FROM cart WHERE user_id = $1 AND recipe_id = $2;';
+    db.any (query, [
+      req.session.user.user_id,
+      req.body.recipe_id
+    ])
+    .then(function (data) {
+      console.log('Removed from cart');
+      res.redirect('/cart');
+    })
+    .catch(function (err) {
+      console.log('Failed to remove from cart');
+    });
+  } else {
+    res.redirect('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
+});
+
+
+// LOGOUT API
 app.get('/logout', (req, res) => {
   console.log('GET: /logout'); 
   req.session.destroy();

@@ -1,36 +1,16 @@
 <%- include ('../partials/header') %>
 <%- include ('../partials/menu') %>
-<main>
-    <div class="relative flex min-h-screen flex-col content-center overflow-hidden bg-gray-50 py-2 sm:py-12">
-        <div class="relative flex flex-col content-center mx-24">
-            <div class="relative flex flex-row space-between">
-                <form class="relative flex flex-row content-center w-full" action="/recipes" method="POST">
-                    <div class="mr-2 w-80">
-                        <input
-                            class="flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-full"
-                            name="search"
-                            type="search"
-                            placeholder="Search recipes, keywords, etc."
-                        />
-                    </div>
-                    <button type="submit" class="flex content-end bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-lg text-white" id="submit_button">
-                        Search
-                    </button>
-                    </form>
-                </form>
-                <form action="\create_recipe" method="POST">
-                    <button type='submit' class="flex-row justify-center items-center w-40 flex content-end bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-lg text-white">Create Recipe</button>
-                </form>
-            </div>
+
+<main class="min-h-[85vh]">
+
             <% if (recipes) { %>
             <div class="relative flex mt-5 flex-col">
-                <table class="relative flex pt-10">
+                <table class="relative flex pt-10 justify-center">
                     <% recipes.forEach((recipe) => { 
                         console.log(recipe.recipe_name);
-                        console.log(recipe.recipe_id);
                         %>
                     <div class="relative flex my-3">
-                        <tr class="relative flex">
+                        <tr class="relative flex justify-center">
                                 <a href="<%= '/view_recipe?recipe_id=' + recipe.recipe_id %>" class="hover:bg-gray-100 hover:bg-opacity-5 shadow-sm ring-1 ring-gray-900/5 relative flex flex-row rounded-lg bg-white w-full h-52">
                                     <div class="relative flex aspect-square bg-black rounded-l-lg h-full">
                                         <img src="<%= recipe.recipe_img_url %>" alt="https://images.squarespace-cdn.com/content/v1/53b839afe4b07ea978436183/1608506169128-S6KYNEV61LEP5MS1UIH4/traditional-food-around-the-world-Travlinmad.jpg" class="object-cover rounded-l-lg ring-1 ring-gray-900/5" />
@@ -44,8 +24,8 @@
                                                 <p class="w-full h-full break-words text-left text-ellipsis overflow-hidden relative flex text-sm"><%= recipe.recipe_desc %></p>
                                             </div>
                                             <div class="h-1/5 relative flex w-full justify-start items-center">
-                                                <form action="/cart/add" method="POST">    
-                                                    <button type='submit' name="recipe_id" value="<%= recipe.recipe_id %>" class=" flex-row justify-center items-center w-40 bg-blue-500 hover:bg-blue-400 px-3 py-2 rounded-lg text-white">Add to Cart</button>
+                                                <form action="/cart/delete" method="POST">
+                                                    <button type='submit' name="recipe_id" value="<%= recipe.recipe_id %>" class=" flex-row justify-center items-center w-40 bg-red-500 hover:bg-red-400 px-3 py-2 rounded-lg text-white">Remove from Cart</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -58,7 +38,7 @@
             </div>
             <% } %>
         </div>
-    </div>
+    
 </main>
 
 <%- include ('../partials/footer') %>
