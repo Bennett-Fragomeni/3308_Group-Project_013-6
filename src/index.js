@@ -310,6 +310,7 @@ app.post('/create_recipe', (req, res) => {
   const recipe_query = 'INSERT INTO recipes (recipe_name, recipe_desc, recipe_img_url) VALUES ($1,$2,$3)';
   const ingredient_query = 'INSERT INTO ingredients(ingredient_name) VALUES ($1);';
   const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id,quantity) VALUES ( (SELECT recipe_id FROM recipes WHERE recipe_name = $1 LIMIT 1), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = $2 LIMIT 1),$3);'
+  const unit_query = 'IF EXISTS (SELECT unit_id FROM units WHERE unit_name = $1) BEGIN END ELSE BEGIN INSERT INTO units (unit_name) VALUES ($1) END';
   let ingredients = req.body.ingredients;
 
   db.any(recipe_query, [
@@ -337,6 +338,17 @@ app.post('/create_recipe', (req, res) => {
       .then(function (data3) {
         console.log('recipe_to_ingredients updated');
         // Updates recipe_to_ingredients table
+
+        db.any(unit_query, [
+          ing.unit
+        ])
+        .then(function (data4) {
+          console.log('Updated units');
+          // Updates units using query
+        })
+        .catch(function(err) {
+          console.log('Failed to update units')
+        });
       })
       .catch(function(err) {
         console.log('Failed to update recipe_to_ingredients');
