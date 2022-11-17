@@ -16,7 +16,9 @@
         var newIngredientInput = document.createElement("input");
         var outerContainer = document.getElementById("ingredientContainer");
 
-        newID = outerContainer.children[outerContainer.children.length - 1].id + 1
+        console.log(outerContainer.children)
+
+        var newID = outerContainer.children[outerContainer.children.length - 1].id + 1
 
         newQuantityInput.classList.add("flex", "h-5", "mt-5", "ring-1", "ring-gray-900/5", "rounded-lg", "p-5", "w-20");
         newUnitInput.classList.add("flex", "h-5", "mt-5", "ring-1", "ring-gray-900/5", "rounded-lg", "p-5", "w-20");
@@ -43,6 +45,14 @@
         innerContainer.appendChild(newIngredientInput)
 
         outerContainer.appendChild(innerContainer);
+      }
+
+      function deleteIngredientInput() {
+        var outerContainer = document.getElementById("ingredientContainer");
+        if (outerContainer.children.length <= 1)
+          return
+        mostRecentInput = outerContainer.children[outerContainer.children.length - 1] 
+        mostRecentInput.remove();
       }
     </script>
     <div
@@ -106,9 +116,14 @@
                     />
                   </div>
                 </div>
-                <button type="button" onclick="addIngredientInput()" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-lg text-white">
-                  +
-                </button>
+                <div class="flex-row flex relative space-x-3">
+                  <button type="button" onclick="addIngredientInput()" class="bg-blue-500 hover:bg-blue-400 w-10 relative justify-center items-center flex marker:px-5 py-2 rounded-lg text-white">
+                    +
+                  </button>
+                  <button type="button" onclick="deleteIngredientInput()" class="bg-blue-500 hover:bg-blue-400 w-10 px-5 py-2 relative flex items-center justify-center rounded-lg text-white">
+                    -
+                  </button>
+                </div>
               </div>           
             <div class="flex py-2">
               <button type="submit" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-lg text-white" id="submit_button">
