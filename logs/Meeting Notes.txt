@@ -3,6 +3,7 @@ Team 6
 Project Name: FrugalFind
 
 Meeting 1: 11/1/2022
+Scribe: Bennet Fragomeni
 
 Move lab10.txt into milestones
 
