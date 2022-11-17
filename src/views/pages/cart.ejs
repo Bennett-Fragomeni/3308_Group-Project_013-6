@@ -1,0 +1,44 @@
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
+<main class="min-h-[85vh]">
+
+            <% if (recipes) { %>
+            <div class="relative flex mt-5 flex-col">
+                <table class="relative flex pt-10 justify-center">
+                    <% recipes.forEach((recipe) => { 
+                        console.log(recipe.recipe_name);
+                        %>
+                    <div class="relative flex my-3">
+                        <tr class="relative flex justify-center">
+                                <a href="<%= '/view_recipe?recipe_id=' + recipe.recipe_id %>" class="hover:bg-gray-100 hover:bg-opacity-5 shadow-sm ring-1 ring-gray-900/5 relative flex flex-row rounded-lg bg-white w-full h-52">
+                                    <div class="relative flex aspect-square bg-black rounded-l-lg h-full">
+                                        <img src="<%= recipe.recipe_img_url %>" alt="https://images.squarespace-cdn.com/content/v1/53b839afe4b07ea978436183/1608506169128-S6KYNEV61LEP5MS1UIH4/traditional-food-around-the-world-Travlinmad.jpg" class="object-cover rounded-l-lg ring-1 ring-gray-900/5" />
+                                    </div>
+                                    <div class="relative flex">
+                                        <div class="relative flex my-6 mx-7 w-full flex-col">
+                                            <div class="relative flex h-1/4 w-full">
+                                                <h1 class="relative flex text-2xl font-bold"><%= recipe.recipe_name %></h1>
+                                            </div>
+                                            <div class="relative flex h-3/4 w-full">
+                                                <p class="w-full h-full break-words text-left text-ellipsis overflow-hidden relative flex text-sm"><%= recipe.recipe_desc %></p>
+                                            </div>
+                                            <div class="h-1/5 relative flex w-full justify-start items-center">
+                                                <form action="/cart/delete" method="POST">
+                                                    <button type='submit' name="recipe_id" value="<%= recipe.recipe_id %>" class=" flex-row justify-center items-center w-40 bg-red-500 hover:bg-red-400 px-3 py-2 rounded-lg text-white">Remove from Cart</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                        </tr>
+                    </div>
+                    <% }) %>
+                </table>
+            </div>
+            <% } %>
+        </div>
+    
+</main>
+
+<%- include ('../partials/footer') %>

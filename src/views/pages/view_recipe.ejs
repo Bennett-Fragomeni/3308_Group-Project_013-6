@@ -19,14 +19,14 @@
                                         <% if (ingredients) {
                                             ingredients.forEach((ingredient) => {
                                         %>
-                                        <li class=""><%= ingredient.quantity + ' ' + ingredient.unit_name + (ingredient.quantity > 1 && ingredient.unit_name != '' ? 's' : '') + ' ' + ingredient.ingredient_name %></li>
+                                        <li class=""><%= ingredient.quantity + ' ' + ingredient.unit_name + (ingredient.quantity > 1 && ingredient.unit_name != '' ? 's' : '') + ' ' + ingredient.ingredient_name + ' ' + ingredient.price + ' ' + ingredient.size %></li>
                                         <% });
                                         } %>
                                     </ul>
                                 </div>
                             </div>
                             <div class="relative flex w-1/3 h-full bg-opacity-20 bg-emerald-500 bg- rounded-r-lg">
-                                <h1 class="m-5 text-xl font-semibold overflow-hidden">Cooking Time</h1>
+                                <h1 class="m-5 text-xl font-semibold overflow-hidden"></h1>
                             </div>
                         </div>
                     </div>
@@ -34,11 +34,15 @@
             </div>  
         </div>
         <div class="relative flex flex-col w-5/6 justify-start">
-            <h1 class="text-3xl font-semibold">Description</h1>
+            <h1 class="text-2xl font-semibold">Description</h1>
             <p class=""> 
                 <%= recipe.recipe_desc %>
             </p>
-        </div>
+        </div> 
+        <form action="/cart/add" method="POST">    
+            <button type='submit' name="recipe_id" value="<%= recipe.recipe_id %>" class=" flex-row justify-center items-center w-40 bg-blue-500 hover:bg-blue-400 px-3 py-2 rounded-lg text-white">Add to Cart</button>
+
+        </form>
         <% } %>
     </div>
 </main>

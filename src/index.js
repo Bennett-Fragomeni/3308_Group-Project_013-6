@@ -16,6 +16,64 @@ const dbConfig = {
 
 const db = pgp(dbConfig);
 
+async function getPriceByIngredientName(ingredientName) {
+  const output = await axios({
+    "async": true,
+    "crossDomain": true,
+    "url": "https://api-ce.kroger.com/v1/connect/oauth2/token",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Authorization": `Basic ${btoa(process.env.CLIENT_ID.concat(':').concat(process.env.CLIENT_SECRET))}`
+    },
+    "data": {
+      "grant_type": "client_credentials",
+      "scope": "product.compact"
+    }
+  });
+
+  const response = await axios({
+    "async": true,
+    "crossDomain": true,
+    "url": `https://api-ce.kroger.com/v1/products?filter.term=${ingredientName}&filter.locationId=62000061`, //&filter.locationId={{LOCATION_ID}}
+    "method": "GET",
+    "headers": {
+      "Accept": "application/json",
+      "Authorization": `Bearer ${output.data.access_token}`
+    }
+  });
+
+  console.log('got access token succesfully')
+    
+  var lowestPrice = 0;
+  var size;
+  var results = response.data.data;
+
+  if (results == [])
+    return {price: 'No price found', size: ''};
+
+  results.forEach(async (ingredient) => {
+    ingredient.items.forEach(async (item) => {
+      if (!('price' in item))
+        return;
+          
+      var newPrice = item.price.promo == 0 ? item.price.regular : item.price.promo;
+  
+      if (newPrice < lowestPrice || lowestPrice == 0) {
+        lowestPrice = newPrice
+        size = item.size
+      }
+    })
+  });
+
+  if (lowestPrice == 0)
+    return {price: 'No price found', size: ''};
+
+  console.log(lowestPrice);
+
+  return {price: lowestPrice, size: size};
+}
+
 db.connect()
   .then(obj => {
     console.log('Database connection successful'); // you can view this message in the docker compose logs
@@ -30,8 +88,10 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 
 const user = {
+  user_id: null,
   username: null,
-  email: null
+  email: null,
+  user_id: null
 };
 
 app.use(
@@ -72,7 +132,6 @@ app.get('/', (req, res) =>{
   }
   else{
     res.render('pages/login', {
-      message: "Please Login Before Continuing",
       auth: false
     });
   }
@@ -106,8 +165,10 @@ app.post('/login', (req, res) => {
         }
         else {
             console.log('User found and passwords match')
+            user.user_id = data[0].user_id;
             user.username = data[0].username;
             user.email = data[0].email;
+            user.user_id = data[0].user_id;
             
             req.session.user = user;
             req.session.save();
@@ -137,7 +198,6 @@ app.get('/register', (req, res) => {
       });
     }else{
       res.render('pages/register', {
-        message: "Create an account",
         auth: false
       });
     }
@@ -199,19 +259,29 @@ app.get('/home', (req, res) => {
   }
 });
 
-// Get /recipes
+// GET /recipes
 app.get('/recipes', (req, res) => {
 
   console.log('GET: /recipes');
+
   if(auth(req)){
     const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
     db.any(query)
     .then(recipes => {
-      console.log(recipes);
-      res.render('pages/recipes', {
-        recipes: recipes,
-        auth: true
-      }); 
+      //Sending the Cart data back to the recipes page
+      const query2 = `SELECT recipe_name FROM users  
+      INNER JOIN cart ON cart.user_id = users.user_id 
+      INNER JOIN recipes ON recipes.recipe_id = cart.recipe_id 
+      WHERE users.user_id = $1;`;
+      console.log("CART U_ID: ", user.user_id);
+      db.any(query2, [user.user_id])
+      .then(cart => {
+        res.render('pages/recipes', {
+          recipes: recipes,
+          cart: cart,
+          auth: true
+        })
+      })
     })
     .catch(function (err) {
       res.redirect('/home',
@@ -225,15 +295,12 @@ app.get('/recipes', (req, res) => {
       auth: false
     });
   }
-  
-
 });
 
-
-
+// POST Recepies
 app.post('/recipes', (req,res) => {
     console.log(req.body.search);
-    const query = 'SELECT * FROM recipes WHERE position(LOWER($1) in LOWER(recipe_name)) > 0 ORDER BY recipes.recipe_id DESC';
+    const query = 'SELECT * FROM recipes WHERE position(LOWER($1) in LOWER(recipe_name)) > 0 ORDER BY recipes.recipe_id DESC;';
     db.any(query, [
         req.body.search
     ])
@@ -250,30 +317,70 @@ app.post('/recipes', (req,res) => {
     });
 });
 
-app.get('/view_recipe', (req, res) => {
+// POST Recepies/cart
+app.post('/recipes/cart', (req,res) => {
+  console.log('POST: /recipes/cart');
+  const query = "INSERT INTO cart (user_id, recipe_id) VALUES ($1, $2);";
+  db.any(query, [
+    user.user_id, 
+    req.body.recipe_id
+  ])
+  .then(data => {
+    res.redirect('/recipes')
+  })
+  .catch(function (err) {
+    console.log('Failed to POST: /recipes/cart');
+    console.log(err);
+  });
+});
+
+// GET View Recepie
+app.get('/view_recipe', async (req, res) => {
   console.log('GET: view_recipe');
   console.log(req.query.recipe_id);
   var recipeID = req.query.recipe_id;
 
   const query1 = 'SELECT * FROM recipes WHERE recipe_id = $1'
   const query2 = 'SELECT quantity, ingredient_name, unit_name FROM (recipe_to_ingredients ri INNER JOIN ingredients i ON ri.ingredient_id = i.ingredient_id) rii INNER JOIN units u ON rii.unit_id = u.unit_id WHERE recipe_id = $1';
+
   db.any(query1, [
     recipeID
   ])
-  .then((data1) => {
-    console.log(data1);
-    if (!data1)
-      return console.log("No recipe found")
+  .then(async (data1) => {
+    //console.log(data1);
+    if (!data1) {
+      console.log("No recipe found")
+      return res.redirect('/recipes');
+    }
     db.any(query2, [
       recipeID
     ])
-    .then((data2) => { 
-      console.log(data2);
-      if (!data2)
+
+    .then(async (ingredients) => { 
+      console.log(ingredients);
+      var promises = []
+
+      async function getPrice(ingredient) {
+        var priceSize = await getPriceByIngredientName(ingredient.ingredient_name);
+        ingredient.price = priceSize.price;
+        ingredient.size = priceSize.size;
+        return ingredient
+      }
+      
+      for (const ingredient of ingredients) {
+        promises.push(getPrice(ingredient))
+      }
+
+      const responses = await Promise.all(promises);
+
+      console.log(ingredients);
+
+      if (!ingredients)
+
         return console.log("No ingredients found")
       res.render('pages/view_recipe', {
         recipe: data1[0],
-        ingredients: data2,
+        ingredients: ingredients,
         auth: true
       })
     })
@@ -288,10 +395,11 @@ app.get('/view_recipe', (req, res) => {
   })
 });
 
+// GET Create Recepie 
 app.get('/create_recipe', (req, res) => {
   console.log('GET: create_recipe');
   if(auth(req)){
-    res.render('pages/create_recipe', {
+      res.render('pages/create_recipe', {
       auth: true
     });
   }
@@ -303,14 +411,16 @@ app.get('/create_recipe', (req, res) => {
   }
 });
 
+// POST Create Recepie
 app.post('/create_recipe', (req, res) => {
   console.log('POST: create_recipe');
   console.log(req.body.recipe_name);
   console.log(req.body);
   const recipe_query = 'INSERT INTO recipes (recipe_name, recipe_desc, recipe_img_url) VALUES ($1,$2,$3)';
   const ingredient_query = 'INSERT INTO ingredients(ingredient_name) VALUES ($1);';
-  const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id,quantity) VALUES ( (SELECT recipe_id FROM recipes WHERE recipe_name = $1 LIMIT 1), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = $2 LIMIT 1),$3);'
-  const unit_query = 'IF EXISTS (SELECT unit_id FROM units WHERE unit_name = $1) BEGIN END ELSE BEGIN INSERT INTO units (unit_name) VALUES ($1) END';
+  const ingredient_to_recipe_query = 'INSERT INTO recipe_to_ingredients (recipe_id, ingredient_id,quantity,unit_id) VALUES ( (SELECT recipe_id FROM recipes WHERE recipe_name = $1 LIMIT 1), (SELECT ingredient_id FROM ingredients WHERE ingredient_name = $2 LIMIT 1),$3,(SELECT unit_id FROM units WHERE unit_name = $4 LIMIT 1) );';
+  const unit_query = 'INSERT INTO units (unit_name) VALUES ($1);';
+  // Queries to add ingredients and recipes, as well as units and update the ingredient_to_recipe table.
   let ingredients = req.body.ingredients;
 
   db.any(recipe_query, [
@@ -330,28 +440,29 @@ app.post('/create_recipe', (req, res) => {
       console.log('Ingredients added');
       // Adds ingredients to database
 
-      db.any(ingredient_to_recipe_query, [
-        req.body.recipe_name,
-        ing.ingredientName,
-        ing.quantity
+      db.any(unit_query, [
+        ing.unit
       ])
       .then(function (data3) {
-        console.log('recipe_to_ingredients updated');
+        console.log('Updated units');
         // Updates recipe_to_ingredients table
 
-        db.any(unit_query, [
+        db.any(ingredient_to_recipe_query, [
+          req.body.recipe_name,
+          ing.ingredientName,
+          ing.quantity,
           ing.unit
         ])
         .then(function (data4) {
-          console.log('Updated units');
+          console.log('recipe_to_ingredients updated');
           // Updates units using query
         })
         .catch(function(err) {
-          console.log('Failed to update units')
+          console.log('Failed to update recipe_to_ingredients')
         });
       })
       .catch(function(err) {
-        console.log('Failed to update recipe_to_ingredients');
+        console.log('Failed to update units');
       });
 
 
@@ -424,53 +535,80 @@ app.post('/home', (req, res) => {
   }
 });
 
-app.get('/get_ingredient', (req, res) => {
-  axios({
-    "async": true,
-    "crossDomain": true,
-    "url": "https://api-ce.kroger.com/v1/connect/oauth2/token",
-    "method": "POST",
-    "headers": {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Authorization": `Basic ${btoa(process.env.CLIENT_ID.concat(':').concat(process.env.CLIENT_SECRET))}`
-    },
-    "data": {
-      "grant_type": "client_credentials",
-      "scope": "product.compact"
-    }
-  })
-  .then((output) => {
-    console.log('got access token succesfully')
-    const term = 'milk';
-    axios({
-      "async": true,
-      "crossDomain": true,
-      "url": "https://api-ce.kroger.com/v1/products?filter.term={{milk}}", //&filter.locationId={{LOCATION_ID}}
-      "method": "GET",
-      "headers": {
-        "Accept": "application/json",
-        "Authorization": `Bearer ${output.data.access_token}`
-      }
-    })
-    .then((results) => {
-      console.log(results)
-      res.render('pages/home', {
-        results: results,
+// GET recipe info based on entries on cart table that match the user's id
+app.get('/cart', (req, res) => {
+  console.log('GET: cart');
+  if(auth(req)){
+    const query = 'SELECT recipes.* FROM recipes,cart WHERE cart.user_id = $1 AND cart.recipe_id = recipes.recipe_id;';
+    db.any (query, [
+      req.session.user.user_id
+    ])
+    .then(function (data) {
+      console.log(data);
+      res.render('pages/cart', {
+        recipes: data,
         auth: true
       });
     })
-    .catch(error => {
-    // Handle errors
-        console.log('Failed to discover');
-        console.log(error);
-    })
-  })
-  .catch(error => {
-    // Handle errors
-      console.log('Failed to get access token');
-      console.log(error);
-  })
+    .catch(function (err) {
+      console.log('Failed to get cart');
+    });
+  } else {
+    res.redirect('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
 });
+
+// POST recipe_id to cart table with the respective user_id
+app.post('/cart/add', (req, res) => {
+  console.log('POST: cart');
+  if(auth(req)){
+    const query = 'INSERT INTO cart (user_id, recipe_id) VALUES ($1, $2);';
+    db.any (query, [
+      req.session.user.user_id,
+      req.body.recipe_id
+    ])
+    .then(function (data) {
+      console.log('Added to cart');
+      res.redirect('/recipes');
+    })
+    .catch(function (err) {
+      console.log('Failed to add to cart');
+    });
+  } else {
+    res.redirect('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
+});
+
+// REMOVE selected entry from cart table
+app.post('/cart/delete', (req, res) => {
+  console.log('DELETE: remove_from_cart');
+  if(auth(req)){
+    const query = 'DELETE FROM cart WHERE user_id = $1 AND recipe_id = $2;';
+    db.any (query, [
+      req.session.user.user_id,
+      req.body.recipe_id
+    ])
+    .then(function (data) {
+      console.log('Removed from cart');
+      res.redirect('/cart');
+    })
+    .catch(function (err) {
+      console.log('Failed to remove from cart');
+    });
+  } else {
+    res.redirect('pages/login', {
+      message: "Please Login Before Continuing",
+      auth: false
+    });
+  }
+});
+
 
 // LOGOUT API
 app.get('/logout', (req, res) => {

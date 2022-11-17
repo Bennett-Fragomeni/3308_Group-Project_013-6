@@ -27,6 +27,7 @@
                 <table class="relative flex pt-10">
                     <% recipes.forEach((recipe) => { 
                         console.log(recipe.recipe_name);
+                        console.log(recipe.recipe_id);
                         %>
                     <div class="relative flex my-3">
                         <tr class="relative flex">
@@ -41,6 +42,11 @@
                                             </div>
                                             <div class="relative flex h-3/4 w-full">
                                                 <p class="w-full h-full break-words text-left text-ellipsis overflow-hidden relative flex text-sm"><%= recipe.recipe_desc %></p>
+                                            </div>
+                                            <div class="h-1/5 relative flex w-full justify-start items-center">
+                                                <form action="/cart/add" method="POST">    
+                                                    <button type='submit' name="recipe_id" value="<%= recipe.recipe_id %>" class=" flex-row justify-center items-center w-40 bg-blue-500 hover:bg-blue-400 px-3 py-2 rounded-lg text-white">Add to Cart</button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>

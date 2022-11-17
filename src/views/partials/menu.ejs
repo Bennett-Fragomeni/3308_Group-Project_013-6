@@ -1,6 +1,10 @@
 <nav class="relative w-full flex flex-row items-center py-3 bg-sky-50 shadow-lg">
   <div class="w-full flex-row flex items-center justify-between px-6">
     <!-- LEFT MENU ITEMS -->
+      <a class="navbar-brand" href="#">
+        <img src="https://t4.ftcdn.net/jpg/05/20/57/53/360_F_520575355_UY5GTOjnRlEiLG11hl5hAG0VvOdcGd3z.jpg" alt="FrugalFinder" width="30" height="30">
+      </a>
+
       <a class="text-xl text-black font-semibold pr-5 " href="/">FrugalFinder</a>
       <ul class="navbar-nav flex flex-row pl-0 mr-auto">
         <li class="nav-item pr-3">
@@ -16,9 +20,9 @@
     </div>
   <!-- RIGHT MENU ITEMS -->
     <div class="flex flex-row items-center relative gap-2 pr-5">
-      <%- include ('./cart') %>
       <div class="dropdown relative flex-row">
-        <% if(auth) { %>
+        <%- include ('./cart') %>
+          <% if(auth) { %>
           <a
           class="dropdown-toggle flex items-center hidden-arrow text-black hover:text-gray-700 focus:text-gray-700"
           href="/logout"
