@@ -34,10 +34,11 @@
             </div>  
         </div>
         <div class="relative flex flex-col w-5/6 justify-start">
-            <h1 class="text-2xl font-semibold">Description</h1>
-            <p class=""> 
+            <h1 class="text-2xl text-center font-semibold">Description</h1>
+            <p class="text-center"> 
                 <%= recipe.recipe_desc %>
             </p>
+            <h1 class="text-xl text-center font-semibold">Total Price: <a class="font-normal text-large"> <%= recipe.total_price %> </a> </h1>
         </div> 
         <form action="/cart/add" method="POST">    
             <button type='submit' name="recipe_id" value="<%= recipe.recipe_id %>" class=" flex-row justify-center items-center w-40 bg-blue-500 hover:bg-blue-400 px-3 py-2 rounded-lg text-white">Add to Cart</button>
