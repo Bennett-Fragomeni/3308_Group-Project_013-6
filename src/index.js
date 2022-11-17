@@ -289,7 +289,7 @@ app.get('/recipes', (req, res) => {
 });
 
 
-
+// POST Recepies
 app.post('/recipes', (req,res) => {
     console.log(req.body.search);
     const query = 'SELECT * FROM recipes WHERE position(LOWER($1) in LOWER(recipe_name)) > 0 ORDER BY recipes.recipe_id DESC';
@@ -309,6 +309,7 @@ app.post('/recipes', (req,res) => {
     });
 });
 
+// GET View Recepie
 app.get('/view_recipe', async (req, res) => {
   console.log('GET: view_recipe');
   console.log(req.query.recipe_id);
@@ -356,6 +357,7 @@ app.get('/view_recipe', async (req, res) => {
   })
 });
 
+// GET Create Recepie 
 app.get('/create_recipe', (req, res) => {
   console.log('GET: create_recipe');
   if(auth(req)){
@@ -371,6 +373,7 @@ app.get('/create_recipe', (req, res) => {
   }
 });
 
+// POST Create Recepie
 app.post('/create_recipe', (req, res) => {
   console.log('POST: create_recipe');
   console.log(req.body.recipe_name);
@@ -480,7 +483,7 @@ app.post('/home', (req, res) => {
   }
 });
 
-// LOGOUT API
+// LOGOUT 
 app.get('/logout', (req, res) => {
   console.log('GET: /logout'); 
   req.session.destroy();
