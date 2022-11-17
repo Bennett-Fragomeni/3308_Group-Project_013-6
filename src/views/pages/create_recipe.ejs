@@ -28,7 +28,7 @@
         newUnitInput.name = `ingredients[${newID}][unit]`;
         newIngredientInput.name = `ingredients[${newID}][ingredientName]`;
 
-        newQuantityInput.placeholder = "Quantity";
+        newQuantityInput.placeholder = "Qty";
         newUnitInput.placeholder = "Unit";
         newIngredientInput.placeholder = "Ingredient Name";
 
@@ -60,7 +60,8 @@
       >
         <form class="relative flex-col space-y-3" action="\create_recipe" method="POST">
             <h1 class="text-2xl font-bold mb-5">Create Recipe</h1>
-            <p1 class="text-m font-normal mb-3">Fill out all the following spaces. Click the "+" button to add as many ingredients as needed! </p1>
+            <p1 class="text-m font-normal mb-3">Fill out all the following spaces. Click the "+" button to add as many ingredients as needed, or click the "-" button to remove a previously added ingredient!</p1>
+            <p style="font-size: 10px;" class="text-m font-normal mb-3">Be sure to add quantities, units, and names for ingredients.</p>
             <%- include ('../partials/message') %>
             <div class="">
               <input
@@ -97,7 +98,7 @@
                       class="relative flex h-5 ring-1 ring-gray-900/5 rounded-lg p-5 w-20"
                       name="ingredients[0][quantity]"
                       type="quantity"
-                      placeholder="Num"
+                      placeholder="Qty"
                       required
                     />
                     <input
