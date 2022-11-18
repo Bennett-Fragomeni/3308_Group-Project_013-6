@@ -2,6 +2,7 @@
 <%- include ('../partials/menu') %>
 
 <main class="min-h-[85vh]">
+    <div class="relative flex min-h-screen flex-col content-center overflow-hidden bg-gray-50 py-2 sm:py-12 px-10">
             <div>
                 <h1 class="text-5xl text-center font-semibold">My Cart</h1>
             </div>
@@ -18,10 +19,11 @@
                                     <div class="relative flex aspect-square bg-black rounded-l-lg h-full">
                                         <img src="<%= recipe.recipe_img_url %>" alt="https://images.squarespace-cdn.com/content/v1/53b839afe4b07ea978436183/1608506169128-S6KYNEV61LEP5MS1UIH4/traditional-food-around-the-world-Travlinmad.jpg" class="object-cover rounded-l-lg ring-1 ring-gray-900/5" />
                                     </div>
-                                    <div class="relative flex">
+                                    <div class="relative w-full flex">
                                         <div class="relative flex my-6 mx-7 w-full flex-col">
-                                            <div class="relative flex h-1/4 w-full">
+                                            <div class="relative flex h-1/4 w-full flex-row justify-between">
                                                 <h1 class="relative flex text-2xl font-bold"><%= recipe.recipe_name %></h1>
+                                                <h1 class="relative flex text-xl font-normal"><%= 'x' + recipe.quantity %></h1>
                                             </div>
                                             <div class="relative flex h-3/4 w-full">
                                                 <p class="w-full h-full break-words text-left text-ellipsis overflow-hidden relative flex text-sm"><%= recipe.recipe_desc %></p>
@@ -46,7 +48,7 @@
             </div>
             <% } %>
         </div>
-    
+    </div>
 </main>
 
 <%- include ('../partials/footer') %>

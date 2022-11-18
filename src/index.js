@@ -74,6 +74,16 @@ async function getPriceByIngredientName(ingredientName) {
   return {price: lowestPrice, size: size};
 }
 
+async function getCart(userID) {
+  const cart = await db.any(`SELECT recipe_name, cart.quantity FROM users  
+      INNER JOIN cart ON cart.user_id = users.user_id 
+      INNER JOIN recipes ON recipes.recipe_id = cart.recipe_id 
+      WHERE users.user_id = $1`, [
+        userID
+      ]);
+  return cart;
+}
+
 db.connect()
   .then(obj => {
     console.log('Database connection successful'); // you can view this message in the docker compose logs
@@ -244,11 +254,13 @@ app.post('/register', async (req, res) => {
   });
 
 // GET HOME
-app.get('/home', (req, res) => {
+app.get('/home', async (req, res) => {
   console.log('GET: /home');
   if(auth(req)){
+    const cart = await getCart(user.user_id);
     res.render('pages/home', {
-      auth: true
+      auth: true,
+      cart: cart
     });
   }
   else{
@@ -267,25 +279,18 @@ app.get('/recipes', (req, res) => {
   if(auth(req)){
     const query = 'SELECT * FROM recipes ORDER BY recipes.recipe_id DESC'
     db.any(query)
-    .then(recipes => {
+    .then(async recipes => {
       //Sending the Cart data back to the recipes page
-      const query2 = `SELECT recipe_name FROM users  
-      INNER JOIN cart ON cart.user_id = users.user_id 
-      INNER JOIN recipes ON recipes.recipe_id = cart.recipe_id 
-      WHERE users.user_id = $1;`;
-      console.log("CART U_ID: ", user.user_id);
-      db.any(query2, [user.user_id])
-      .then(cart => {
+        const cart = await getCart(user.user_id);
+        console.log(cart);
         res.render('pages/recipes', {
           recipes: recipes,
           cart: cart,
           auth: true
         })
-      })
     })
     .catch(function (err) {
-      res.redirect('/home',
-      );
+      res.redirect('/home');
       console.log('Failed to GET: /recipes')
     });
   }
@@ -317,19 +322,20 @@ app.post('/recipes', (req,res) => {
     });
 });
 
-// POST Recepies/cart
+// POST Recipes/cart
 app.post('/recipes/cart', (req,res) => {
   console.log('POST: /recipes/cart');
-  const query1 = "SELECT quantity FROM cart WHERE user_id = $1 AND recipe_id = $1"
-  db.any(query1, 
-    user.user_id, 
-    req.body.recipe_id,
+  const query1 = "SELECT quantity FROM cart WHERE user_id = $1 AND recipe_id = $2"
+  db.any(query1, [
+      user.user_id, 
+      req.body.recipe_id,
+    ]
   )
   .then((quantityData) => {
-      const query2 = "UPDATE cart SET quantity = $2 WHERE user_id = $1";
+      const query2 = "UPDATE cart SET quantity = $2 WHERE user_id = $1 AND recipe_id = $2 ";
       db.any(query2, [
         user.user_id, 
-        quantityData.quantity
+        quantityData[0].quantity + 1
       ])
       .then(data => {
         console.log("succesfully increaed quantity of item in cart");
@@ -400,12 +406,15 @@ app.get('/view_recipe', async (req, res) => {
       console.log(ingredients);
 
       if (!ingredients)
-
         return console.log("No ingredients found")
+
+      const cart = await getCart(user.user_id);
+
       res.render('pages/view_recipe', {
         recipe: data1[0],
         ingredients: ingredients,
-        auth: true
+        auth: true,
+        cart: cart
       })
     })
     .catch((error) => {
@@ -420,12 +429,14 @@ app.get('/view_recipe', async (req, res) => {
 });
 
 // GET Create Recepie 
-app.get('/create_recipe', (req, res) => {
+app.get('/create_recipe', async (req, res) => {
   console.log('GET: create_recipe');
   if(auth(req)){
+      const cart = await getCart(user.user_id);
       res.render('pages/create_recipe', {
-      auth: true
-    });
+        auth: true,
+        cart: cart
+      });
   }
   else{
     res.render('pages/login', {
@@ -563,7 +574,7 @@ app.post('/home', (req, res) => {
 app.get('/cart', (req, res) => {
   console.log('GET: cart');
   if(auth(req)){
-    const query = 'SELECT recipes.* FROM recipes,cart WHERE cart.user_id = $1 AND cart.recipe_id = recipes.recipe_id;';
+    const query = 'SELECT recipes.*, cart.quantity FROM recipes, cart WHERE cart.user_id = $1 AND cart.recipe_id = recipes.recipe_id;';
     db.any (query, [
       req.session.user.user_id
     ])
@@ -589,34 +600,69 @@ app.get('/cart', (req, res) => {
 app.post('/cart/add', (req, res) => {
   console.log('POST: cart');
   if(auth(req)){
-    const query = 'INSERT INTO cart (user_id, recipe_id) VALUES ($1, $2);';
-    db.any (query, [
-      req.session.user.user_id,
+      const query1 = "SELECT quantity FROM cart WHERE user_id = $1 AND recipe_id = $2"
+    db.any(query1, [
+      user.user_id, 
       req.body.recipe_id
-    ])
-    .then(function (data) {
-      console.log('Added to cart');
-      res.redirect('/recipes');
+    ]
+    )
+    .then((quantityData) => {
+      console.log(quantityData)
+        const query2 = "UPDATE cart SET quantity = $3 WHERE user_id = $1 AND recipe_id = $2";
+        db.any(query2, [
+          user.user_id,
+          req.body.recipe_id,
+          quantityData[0].quantity + 1
+        ])
+        .then(data => {
+          console.log("succesfully increased quantity of item in cart");
+          res.redirect('/recipes')
+        })
+        .catch(function (err) {
+          console.log('Failed to POST: /recipes/cart');
+          console.log(err);
+        });
     })
     .catch(function (err) {
-      console.log('Failed to add to cart');
-    });
+        console.log(1)
+        const query2 = "INSERT INTO cart (user_id, recipe_id, quantity) VALUES ($1, $2, $3);";
+        db.any(query2, [
+          user.user_id, 
+          req.body.recipe_id,
+          1
+        ])
+        .then(data => {
+          console.log("succesfully added item to cart");
+          res.redirect('/recipes')
+        })
+        .catch(function (err) {
+          console.log('Failed to POST: /recipes/cart');
+          console.log(err);
+        });
+      });
   } else {
-    res.redirect('pages/login', {
-      message: "Please Login Before Continuing",
-      auth: false
-    });
+    res.redirect('/login');
   }
 });
 
 // REMOVE selected entry from cart table
-app.post('/cart/delete', (req, res) => {
+app.post('/cart/delete', async (req, res) => {
   console.log('DELETE: remove_from_cart');
   if(auth(req)){
-    const query = 'DELETE FROM cart WHERE user_id = $1 AND recipe_id = $2;';
-    db.any (query, [
+
+    const currQuantity = await db.any('SELECT quantity FROM cart WHERE user_id = $1 AND recipe_id = $2', [
       req.session.user.user_id,
       req.body.recipe_id
+    ])
+
+    console.log(currQuantity)
+
+    const query = currQuantity[0].quantity == 1 ? 'DELETE FROM cart WHERE user_id = $1 AND recipe_id = $2' : 'UPDATE cart SET quantity = $3 WHERE user_id = $1 AND recipe_id = $2';
+
+    db.any (query, [
+      req.session.user.user_id,
+      req.body.recipe_id,
+      currQuantity[0].quantity - 1
     ])
     .then(function (data) {
       console.log('Removed from cart');
