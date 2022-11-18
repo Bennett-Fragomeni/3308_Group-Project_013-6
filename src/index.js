@@ -43,14 +43,13 @@ async function getPriceByIngredientName(ingredientName) {
     }
   });
 
-  console.log('got access token succesfully')
-    
   var lowestPrice = 0;
   var size;
+  var productName;
   var results = response.data.data;
 
   if (results == [])
-    return {price: 'No price found', size: ''};
+    return {price: 'No price found', size: '', productName: ''};
 
   results.forEach(async (ingredient) => {
     ingredient.items.forEach(async (item) => {
@@ -62,16 +61,17 @@ async function getPriceByIngredientName(ingredientName) {
       if (newPrice < lowestPrice || lowestPrice == 0) {
         lowestPrice = newPrice
         size = item.size
+        productName = ingredient.description;
       }
     })
   });
 
   if (lowestPrice == 0)
-    return {price: 'No price found', size: ''};
+    return {price: 'No price found', size: '', productName: ''};
 
   console.log(lowestPrice);
 
-  return {price: lowestPrice, size: size};
+  return {price: lowestPrice, size: size, productName: productName};
 }
 
 async function getCart(userID) {
@@ -394,6 +394,7 @@ app.get('/view_recipe', async (req, res) => {
         var priceSize = await getPriceByIngredientName(ingredient.ingredient_name);
         ingredient.price = priceSize.price;
         ingredient.size = priceSize.size;
+        ingredient.productName = priceSize.productName;
         return ingredient
       }
       
@@ -571,22 +572,47 @@ app.post('/home', (req, res) => {
 });
 
 // GET recipe info based on entries on cart table that match the user's id
-app.get('/cart', (req, res) => {
+app.get('/cart', async(req, res) => {
   console.log('GET: cart');
   if(auth(req)){
-    const query = 'SELECT recipes.*, cart.quantity FROM recipes, cart WHERE cart.user_id = $1 AND cart.recipe_id = recipes.recipe_id;';
-    db.any (query, [
-      req.session.user.user_id
+    const recipe_names = await db.any('SELECT recipes.*, cart.quantity FROM recipes, cart WHERE cart.user_id = $1 AND cart.recipe_id = recipes.recipe_id;', [
+      user.user_id
     ])
-    .then(function (data) {
-      console.log(data);
-      res.render('pages/cart', {
-        recipes: data,
-        auth: true
-      });
-    })
-    .catch(function (err) {
-      console.log('Failed to get cart');
+
+    let ingredients = await db.any('SELECT riu.quantity, riu.ingredient_name, riu.unit_name FROM cart c INNER JOIN ((recipe_to_ingredients ri INNER JOIN ingredients i ON ri.ingredient_id = i.ingredient_id) rii INNER JOIN units u ON rii.unit_id = u.unit_id) riu ON c.recipe_id = riu.recipe_id WHERE c.user_id=$1', [
+      user.user_id
+    ]);
+
+    var promises = []
+
+      async function getPrice(ingredient) {
+        var priceSize = await getPriceByIngredientName(ingredient.ingredient_name);
+        ingredient.price = priceSize.price;
+        ingredient.size = priceSize.size;
+        ingredient.productName = priceSize.productName;
+        return ingredient
+      }
+      
+      for (const ingredient of ingredients) {
+        promises.push(getPrice(ingredient))
+      }
+
+      const responses = await Promise.all(promises);
+
+      console.log(ingredients);
+
+      if (!ingredients)
+        return console.log("No ingredients found")
+
+      const cart = await getCart(user.user_id);
+
+    console.log(ingredients);
+
+    res.render('pages/cart', {
+      recipes: recipe_names,
+      ingredients: ingredients,
+      cart: cart,
+      auth: true
     });
   } else {
     res.redirect('pages/login', {
