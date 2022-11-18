@@ -38,5 +38,6 @@ CREATE TABLE units(
 DROP TABLE IF EXISTS cart CASCADE;
 CREATE TABLE cart(
     user_id SERIAL NOT NULL,
-    recipe_id SERIAL NOT NULL
+    recipe_id SERIAL NOT NULL,
+    quantity INT NOT NULL
 );

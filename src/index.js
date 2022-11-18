@@ -320,18 +320,42 @@ app.post('/recipes', (req,res) => {
 // POST Recepies/cart
 app.post('/recipes/cart', (req,res) => {
   console.log('POST: /recipes/cart');
-  const query = "INSERT INTO cart (user_id, recipe_id) VALUES ($1, $2);";
-  db.any(query, [
+  const query1 = "SELECT quantity FROM cart WHERE user_id = $1 AND recipe_id = $1"
+  db.any(query1, 
     user.user_id, 
-    req.body.recipe_id
-  ])
-  .then(data => {
-    res.redirect('/recipes')
+    req.body.recipe_id,
+  )
+  .then((quantityData) => {
+      const query2 = "UPDATE cart SET quantity = $2 WHERE user_id = $1";
+      db.any(query2, [
+        user.user_id, 
+        quantityData.quantity
+      ])
+      .then(data => {
+        console.log("succesfully increaed quantity of item in cart");
+        res.redirect('/recipes')
+      })
+      .catch(function (err) {
+        console.log('Failed to POST: /recipes/cart');
+        console.log(err);
+      });
   })
   .catch(function (err) {
-    console.log('Failed to POST: /recipes/cart');
-    console.log(err);
-  });
+      const query2 = "INSERT INTO cart (user_id, recipe_id, quantity) VALUES ($1, $2, $3);";
+      db.any(query2, [
+        user.user_id, 
+        req.body.recipe_id,
+        1
+      ])
+      .then(data => {
+        console.log("succesfully added item to cart");
+        res.redirect('/recipes')
+      })
+      .catch(function (err) {
+        console.log('Failed to POST: /recipes/cart');
+        console.log(err);
+      });
+    });
 });
 
 // GET View Recepie
