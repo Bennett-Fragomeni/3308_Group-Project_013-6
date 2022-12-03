@@ -55,3 +55,5 @@ User acceptance testing
 - Users will test and use the product, pointing out features which are limited or features that they wish were implemented
 
 7. Link to application
+
+Issue with hosting server, please deploy using instructions above.
